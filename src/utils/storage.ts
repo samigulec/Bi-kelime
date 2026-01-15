@@ -1,8 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserProgress } from '../types';
+import { LanguageCode } from './translations';
 
 const STORAGE_KEYS = {
   USER_PROGRESS: '@daily_idiom_progress',
+  USER_LANGUAGE: '@user_language',
   LAST_NOTIFICATION_DATE: '@last_notification_date',
 };
 
@@ -76,6 +78,30 @@ export const updateDailyStreak = async (idiomId: number): Promise<UserProgress> 
 };
 
 /**
+ * Get user's selected language
+ */
+export const getUserLanguage = async (): Promise<LanguageCode | null> => {
+  try {
+    const language = await AsyncStorage.getItem(STORAGE_KEYS.USER_LANGUAGE);
+    return language as LanguageCode | null;
+  } catch (error) {
+    console.error('Error getting user language:', error);
+    return null;
+  }
+};
+
+/**
+ * Save user's selected language
+ */
+export const saveUserLanguage = async (language: LanguageCode): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(STORAGE_KEYS.USER_LANGUAGE, language);
+  } catch (error) {
+    console.error('Error saving user language:', error);
+  }
+};
+
+/**
  * Clear all stored data (for development/testing)
  */
 export const clearAllData = async (): Promise<void> => {
@@ -85,4 +111,3 @@ export const clearAllData = async (): Promise<void> => {
     console.error('Error clearing data:', error);
   }
 };
-

@@ -14,11 +14,13 @@ import * as Haptics from 'expo-haptics';
 import { Idiom, UserProgress } from '../types';
 import { getIdiomOfTheDay } from '../utils/idiomUtils';
 import { updateDailyStreak } from '../utils/storage';
+import { getTranslation, LanguageCode, getIdiomMeaning } from '../utils/translations';
 
 const { width } = Dimensions.get('window');
 
 type HomeScreenProps = {
   onNavigateToChat: (idiom: Idiom) => void;
+  language: LanguageCode;
 };
 
 // Animated Cloud Component
@@ -60,10 +62,13 @@ const Cloud: React.FC<{ delay: number; top: number; size: number; duration: numb
   );
 };
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigateToChat }) => {
+const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigateToChat, language }) => {
   const [idiom, setIdiom] = useState<Idiom | null>(null);
   const [progress, setProgress] = useState<UserProgress | null>(null);
   const [showMeaning, setShowMeaning] = useState(false);
+
+  // Get translations
+  const t = (key: Parameters<typeof getTranslation>[0]) => getTranslation(key, language);
 
   // Animations
   const cardFloat = useRef(new Animated.Value(0)).current;
@@ -282,11 +287,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigateToChat }) => {
     outputRange: ['-5deg', '5deg'],
   });
 
+  // Get localized meaning for the idiom
+  const getLocalizedMeaning = () => {
+    if (!idiom) return '';
+    return getIdiomMeaning(idiom.id, language, idiom.meaningTR);
+  };
+
   if (!idiom) {
     return (
       <LinearGradient colors={['#E0F4FF', '#B8E4FF', '#A8DAFF']} style={styles.container}>
         <SafeAreaView style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Yükleniyor... ✨</Text>
+          <Text style={styles.loadingText}>{t('loading')}</Text>
         </SafeAreaView>
       </LinearGradient>
     );
@@ -303,7 +314,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigateToChat }) => {
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.appTitle}>Bi'Kelime</Text>
+          <Text style={styles.appTitle}>{t('appName')}</Text>
           {progress && progress.streak > 0 && (
             <Animated.View style={[styles.streakBubble, { transform: [{ scale: streakPulse }] }]}>
               <Animated.Text 
@@ -319,7 +330,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigateToChat }) => {
               >
                 🔥
               </Animated.Text>
-              <Text style={styles.streakText}>{progress.streak} gün</Text>
+              <Text style={styles.streakText}>{progress.streak} {t('dayStreak')}</Text>
             </Animated.View>
           )}
         </View>
@@ -338,7 +349,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigateToChat }) => {
             ]}
           >
             {/* Idiom Label */}
-            <Text style={styles.idiomLabel}>🎯 Günün Deyimi</Text>
+            <Text style={styles.idiomLabel}>{t('idiomOfTheDay')}</Text>
             
             {/* English Idiom */}
             <Text style={styles.idiomText}>"{idiom.idiom}"</Text>
@@ -372,13 +383,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigateToChat }) => {
                     👀
                   </Animated.Text>
                   <Text style={styles.meaningButtonText}>
-                    {showMeaning ? 'Gizle' : 'Anlamını Göster'}
+                    {showMeaning ? t('hideMeaning') : t('showMeaning')}
                   </Text>
                 </TouchableOpacity>
               </Animated.View>
             </View>
 
-            {/* Turkish Meaning (Animated Reveal) */}
+            {/* Localized Meaning (Animated Reveal) */}
             {showMeaning && (
               <Animated.View 
                 style={[
@@ -389,8 +400,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigateToChat }) => {
                   }
                 ]}
               >
-                <Text style={styles.meaningLabel}>🇹🇷 Türkçe Anlam</Text>
-                <Text style={styles.meaningText}>{idiom.meaningTR}</Text>
+                <Text style={styles.meaningLabel}>{t('meaning')}</Text>
+                <Text style={styles.meaningText}>{getLocalizedMeaning()}</Text>
               </Animated.View>
             )}
 
@@ -402,7 +413,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigateToChat }) => {
             </View>
 
             {/* Example Sentence */}
-            <Text style={styles.exampleLabel}>📝 Örnek Cümle</Text>
+            <Text style={styles.exampleLabel}>{t('exampleSentence')}</Text>
             <Text style={styles.exampleText}>"{idiom.example}"</Text>
           </Animated.View>
         </View>
@@ -415,11 +426,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigateToChat }) => {
             activeOpacity={0.9}
           >
             <Text style={styles.practiceEmoji}>💬</Text>
-            <Text style={styles.practiceButtonText}>Bu Deyimle Pratik Yap!</Text>
+            <Text style={styles.practiceButtonText}>{t('practiceWithAI')}</Text>
           </TouchableOpacity>
         </Animated.View>
         
-        <Text style={styles.hintText}>Yapay zeka öğretmenle eğlenerek öğren! 🎉</Text>
+        <Text style={styles.hintText}>{t('practiceHint')}</Text>
       </SafeAreaView>
     </LinearGradient>
   );

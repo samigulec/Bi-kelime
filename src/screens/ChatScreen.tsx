@@ -16,23 +16,28 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { Idiom, ChatMessage } from '../types';
+import { getTranslation, LanguageCode } from '../utils/translations';
 import { 
   getAIResponse, 
   createUserMessage, 
   getInitialGreeting,
-  quickReplyOptions,
+  getQuickReplyOptions,
 } from '../services/aiChat';
 
 type ChatScreenProps = {
   idiom: Idiom;
   onNavigateBack: () => void;
+  language: LanguageCode;
 };
 
-const ChatScreen: React.FC<ChatScreenProps> = ({ idiom, onNavigateBack }) => {
+const ChatScreen: React.FC<ChatScreenProps> = ({ idiom, onNavigateBack, language }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const flatListRef = useRef<FlatList>(null);
+
+  // Get translations
+  const t = (key: Parameters<typeof getTranslation>[0]) => getTranslation(key, language);
 
   // Animations
   const teacherBounce = useRef(new Animated.Value(0)).current;
@@ -40,10 +45,10 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ idiom, onNavigateBack }) => {
   const sendButtonScale = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    const greeting = getInitialGreeting(idiom);
+    const greeting = getInitialGreeting(idiom, language);
     setMessages([greeting]);
     startAnimations();
-  }, [idiom]);
+  }, [idiom, language]);
 
   const startAnimations = () => {
     // Teacher bounce animation
@@ -96,13 +101,13 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ idiom, onNavigateBack }) => {
     }, 100);
 
     try {
-      const aiResponse = await getAIResponse(messageText, idiom, updatedMessages);
+      const aiResponse = await getAIResponse(messageText, idiom, updatedMessages, language);
       setMessages(prev => [...prev, aiResponse]);
     } catch (error) {
       const errorMessage: ChatMessage = {
         id: `error_${Date.now()}`,
         role: 'assistant',
-        content: 'Bir hata oluştu. Lütfen tekrar dene! 😅',
+        content: t('errorMessage'),
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -191,11 +196,13 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ idiom, onNavigateBack }) => {
         </Animated.View>
         <View style={[styles.messageBubble, styles.aiBubble, styles.typingBubble]}>
           <ActivityIndicator size="small" color="#7EC8E3" />
-          <Text style={styles.typingText}>Yazıyor...</Text>
+          <Text style={styles.typingText}>{t('typing')}</Text>
         </View>
       </View>
     );
   };
+
+  const quickReplies = getQuickReplyOptions(language);
 
   return (
     <LinearGradient colors={['#E0F4FF', '#F0F9FF', '#FFFFFF']} style={styles.container}>
@@ -211,7 +218,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ idiom, onNavigateBack }) => {
             </TouchableOpacity>
           </Animated.View>
           <View style={styles.headerCenter}>
-            <Text style={styles.headerTitle}>💬 Pratik Zamanı!</Text>
+            <Text style={styles.headerTitle}>{t('practiceTime')}</Text>
             <Text style={styles.headerSubtitle} numberOfLines={1}>
               "{idiom.idiom}"
             </Text>
@@ -240,7 +247,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ idiom, onNavigateBack }) => {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.quickReplyScroll}
           >
-            {quickReplyOptions.map((option) => (
+            {quickReplies.map((option) => (
               <TouchableOpacity
                 key={option.id}
                 style={styles.quickReplyChip}
@@ -263,7 +270,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ idiom, onNavigateBack }) => {
             <View style={styles.inputWrapper}>
               <TextInput
                 style={styles.textInput}
-                placeholder="İngilizce cümleni yaz... ✍️"
+                placeholder={t('writeYourSentence')}
                 placeholderTextColor="#A0C4D8"
                 value={inputText}
                 onChangeText={setInputText}
