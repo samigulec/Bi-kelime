@@ -15,8 +15,9 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
-import { Idiom, ChatMessage } from '../types';
+import { ContentItem, ChatMessage } from '../types';
 import { getTranslation, LanguageCode } from '../utils/translations';
+import { getTranslation as getContentTranslation } from '../utils/contentLoader';
 import { 
   getAIResponse, 
   createUserMessage, 
@@ -25,19 +26,20 @@ import {
 } from '../services/aiChat';
 
 type ChatScreenProps = {
-  idiom: Idiom;
+  word: ContentItem;
   onNavigateBack: () => void;
-  language: LanguageCode;
+  nativeLanguage: LanguageCode;
+  targetLanguage: LanguageCode;
 };
 
-const ChatScreen: React.FC<ChatScreenProps> = ({ idiom, onNavigateBack, language }) => {
+const ChatScreen: React.FC<ChatScreenProps> = ({ word, onNavigateBack, nativeLanguage, targetLanguage }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const flatListRef = useRef<FlatList>(null);
 
   // Get translations
-  const t = (key: Parameters<typeof getTranslation>[0]) => getTranslation(key, language);
+  const t = (key: Parameters<typeof getTranslation>[0]) => getTranslation(key, nativeLanguage);
 
   // Animations
   const teacherBounce = useRef(new Animated.Value(0)).current;
@@ -45,10 +47,11 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ idiom, onNavigateBack, language
   const sendButtonScale = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    const greeting = getInitialGreeting(idiom, language);
+    const wordTranslation = getContentTranslation(word, nativeLanguage);
+    const greeting = getInitialGreeting(word, nativeLanguage, targetLanguage, wordTranslation);
     setMessages([greeting]);
     startAnimations();
-  }, [idiom, language]);
+  }, [word, nativeLanguage, targetLanguage]);
 
   const startAnimations = () => {
     // Teacher bounce animation
@@ -101,7 +104,8 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ idiom, onNavigateBack, language
     }, 100);
 
     try {
-      const aiResponse = await getAIResponse(messageText, idiom, updatedMessages, language);
+      const wordTranslation = getContentTranslation(word, nativeLanguage);
+      const aiResponse = await getAIResponse(messageText, word, updatedMessages, nativeLanguage, targetLanguage, wordTranslation);
       setMessages(prev => [...prev, aiResponse]);
     } catch (error) {
       const errorMessage: ChatMessage = {
@@ -202,7 +206,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ idiom, onNavigateBack, language
     );
   };
 
-  const quickReplies = getQuickReplyOptions(language);
+  const quickReplies = getQuickReplyOptions(nativeLanguage);
 
   return (
     <LinearGradient colors={['#E0F4FF', '#F0F9FF', '#FFFFFF']} style={styles.container}>
@@ -220,7 +224,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ idiom, onNavigateBack, language
           <View style={styles.headerCenter}>
             <Text style={styles.headerTitle}>{t('practiceTime')}</Text>
             <Text style={styles.headerSubtitle} numberOfLines={1}>
-              "{idiom.idiom}"
+              "{word.target_word}"
             </Text>
           </View>
           <View style={styles.headerSpacer} />

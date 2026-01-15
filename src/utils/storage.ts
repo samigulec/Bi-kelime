@@ -1,10 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UserProgress } from '../types';
-import { LanguageCode } from './translations';
+import { UserProgress, LanguagePreferences } from '../types';
 
 const STORAGE_KEYS = {
   USER_PROGRESS: '@daily_idiom_progress',
-  USER_LANGUAGE: '@user_language',
+  LANGUAGE_PREFERENCES: '@language_preferences',
   LAST_NOTIFICATION_DATE: '@last_notification_date',
 };
 
@@ -78,26 +77,26 @@ export const updateDailyStreak = async (idiomId: number): Promise<UserProgress> 
 };
 
 /**
- * Get user's selected language
+ * Get user's language preferences
  */
-export const getUserLanguage = async (): Promise<LanguageCode | null> => {
+export const getLanguagePreferences = async (): Promise<LanguagePreferences | null> => {
   try {
-    const language = await AsyncStorage.getItem(STORAGE_KEYS.USER_LANGUAGE);
-    return language as LanguageCode | null;
+    const data = await AsyncStorage.getItem(STORAGE_KEYS.LANGUAGE_PREFERENCES);
+    return data ? JSON.parse(data) : null;
   } catch (error) {
-    console.error('Error getting user language:', error);
+    console.error('Error getting language preferences:', error);
     return null;
   }
 };
 
 /**
- * Save user's selected language
+ * Save user's language preferences
  */
-export const saveUserLanguage = async (language: LanguageCode): Promise<void> => {
+export const saveLanguagePreferences = async (preferences: LanguagePreferences): Promise<void> => {
   try {
-    await AsyncStorage.setItem(STORAGE_KEYS.USER_LANGUAGE, language);
+    await AsyncStorage.setItem(STORAGE_KEYS.LANGUAGE_PREFERENCES, JSON.stringify(preferences));
   } catch (error) {
-    console.error('Error saving user language:', error);
+    console.error('Error saving language preferences:', error);
   }
 };
 

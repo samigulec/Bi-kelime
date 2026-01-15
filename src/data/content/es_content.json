@@ -1,0 +1,220 @@
+[
+  {
+    "id": "es_1",
+    "target_word": "Hola",
+    "level": "A1",
+    "translations": {
+      "en": "Hello",
+      "tr": "Merhaba",
+      "de": "Hallo",
+      "fr": "Bonjour",
+      "pt": "Olá",
+      "it": "Ciao",
+      "ru": "Привет",
+      "ja": "こんにちは",
+      "ko": "안녕하세요",
+      "zh": "你好"
+    },
+    "example_sentence": "¡Hola! ¿Cómo estás?",
+    "example_translation": {
+      "en": "Hello! How are you?",
+      "tr": "Merhaba! Nasılsın?",
+      "de": "Hallo! Wie geht es dir?",
+      "fr": "Bonjour! Comment vas-tu?",
+      "pt": "Olá! Como você está?",
+      "it": "Ciao! Come stai?",
+      "ru": "Привет! Как дела?",
+      "ja": "こんにちは！元気ですか？",
+      "ko": "안녕하세요! 어떻게 지내세요?",
+      "zh": "你好！你好吗？"
+    },
+    "pronunciation": "OH-lah"
+  },
+  {
+    "id": "es_2",
+    "target_word": "Gracias",
+    "level": "A1",
+    "translations": {
+      "en": "Thank you / Thanks",
+      "tr": "Teşekkür ederim",
+      "de": "Danke",
+      "fr": "Merci",
+      "pt": "Obrigado",
+      "it": "Grazie",
+      "ru": "Спасибо",
+      "ja": "ありがとう",
+      "ko": "감사합니다",
+      "zh": "谢谢"
+    },
+    "example_sentence": "Gracias por tu ayuda.",
+    "example_translation": {
+      "en": "Thanks for your help.",
+      "tr": "Yardımın için teşekkürler.",
+      "de": "Danke für deine Hilfe.",
+      "fr": "Merci pour ton aide.",
+      "pt": "Obrigado pela sua ajuda.",
+      "it": "Grazie per il tuo aiuto.",
+      "ru": "Спасибо за твою помощь.",
+      "ja": "手伝ってくれてありがとう。",
+      "ko": "도와줘서 고마워요.",
+      "zh": "谢谢你的帮助。"
+    },
+    "pronunciation": "GRAH-see-ahs"
+  },
+  {
+    "id": "es_3",
+    "target_word": "Amigo",
+    "level": "A1",
+    "translations": {
+      "en": "Friend (male)",
+      "tr": "Arkadaş (erkek)",
+      "de": "Freund",
+      "fr": "Ami",
+      "pt": "Amigo",
+      "it": "Amico",
+      "ru": "Друг",
+      "ja": "友達（男性）",
+      "ko": "친구 (남성)",
+      "zh": "朋友（男性）"
+    },
+    "example_sentence": "Mi amigo es muy simpático.",
+    "example_translation": {
+      "en": "My friend is very nice.",
+      "tr": "Arkadaşım çok sempatik.",
+      "de": "Mein Freund ist sehr nett.",
+      "fr": "Mon ami est très sympa.",
+      "pt": "Meu amigo é muito simpático.",
+      "it": "Il mio amico è molto simpatico.",
+      "ru": "Мой друг очень приятный.",
+      "ja": "私の友達はとても親切です。",
+      "ko": "내 친구는 매우 친절해요.",
+      "zh": "我的朋友很友好。"
+    },
+    "pronunciation": "ah-MEE-goh"
+  },
+  {
+    "id": "es_4",
+    "target_word": "Casa",
+    "level": "A1",
+    "translations": {
+      "en": "House / Home",
+      "tr": "Ev",
+      "de": "Haus",
+      "fr": "Maison",
+      "pt": "Casa",
+      "it": "Casa",
+      "ru": "Дом",
+      "ja": "家",
+      "ko": "집",
+      "zh": "房子"
+    },
+    "example_sentence": "Esta es mi casa.",
+    "example_translation": {
+      "en": "This is my house.",
+      "tr": "Bu benim evim.",
+      "de": "Das ist mein Haus.",
+      "fr": "C'est ma maison.",
+      "pt": "Esta é a minha casa.",
+      "it": "Questa è la mia casa.",
+      "ru": "Это мой дом.",
+      "ja": "これは私の家です。",
+      "ko": "이것은 내 집이에요.",
+      "zh": "这是我的房子。"
+    },
+    "pronunciation": "KAH-sah"
+  },
+  {
+    "id": "es_5",
+    "target_word": "Agua",
+    "level": "A1",
+    "translations": {
+      "en": "Water",
+      "tr": "Su",
+      "de": "Wasser",
+      "fr": "Eau",
+      "pt": "Água",
+      "it": "Acqua",
+      "ru": "Вода",
+      "ja": "水",
+      "ko": "물",
+      "zh": "水"
+    },
+    "example_sentence": "Necesito agua, por favor.",
+    "example_translation": {
+      "en": "I need water, please.",
+      "tr": "Lütfen suya ihtiyacım var.",
+      "de": "Ich brauche Wasser, bitte.",
+      "fr": "J'ai besoin d'eau, s'il te plaît.",
+      "pt": "Preciso de água, por favor.",
+      "it": "Ho bisogno di acqua, per favore.",
+      "ru": "Мне нужна вода, пожалуйста.",
+      "ja": "水が必要です、お願いします。",
+      "ko": "물이 필요해요, 부탁해요.",
+      "zh": "我需要水，请。"
+    },
+    "pronunciation": "AH-gwah"
+  },
+  {
+    "id": "es_6",
+    "target_word": "Comida",
+    "level": "A1",
+    "translations": {
+      "en": "Food",
+      "tr": "Yemek",
+      "de": "Essen",
+      "fr": "Nourriture",
+      "pt": "Comida",
+      "it": "Cibo",
+      "ru": "Еда",
+      "ja": "食べ物",
+      "ko": "음식",
+      "zh": "食物"
+    },
+    "example_sentence": "La comida está deliciosa.",
+    "example_translation": {
+      "en": "The food is delicious.",
+      "tr": "Yemek çok lezzetli.",
+      "de": "Das Essen ist lecker.",
+      "fr": "La nourriture est délicieuse.",
+      "pt": "A comida está deliciosa.",
+      "it": "Il cibo è delizioso.",
+      "ru": "Еда вкусная.",
+      "ja": "食べ物は美味しいです。",
+      "ko": "음식이 맛있어요.",
+      "zh": "食物很美味。"
+    },
+    "pronunciation": "koh-MEE-dah"
+  },
+  {
+    "id": "es_7",
+    "target_word": "Amor",
+    "level": "A1",
+    "translations": {
+      "en": "Love",
+      "tr": "Aşk / Sevgi",
+      "de": "Liebe",
+      "fr": "Amour",
+      "pt": "Amor",
+      "it": "Amore",
+      "ru": "Любовь",
+      "ja": "愛",
+      "ko": "사랑",
+      "zh": "爱"
+    },
+    "example_sentence": "Te quiero con todo mi amor.",
+    "example_translation": {
+      "en": "I love you with all my heart.",
+      "tr": "Seni tüm kalbimle seviyorum.",
+      "de": "Ich liebe dich von ganzem Herzen.",
+      "fr": "Je t'aime de tout mon cœur.",
+      "pt": "Eu te amo com todo o meu coração.",
+      "it": "Ti amo con tutto il mio cuore.",
+      "ru": "Я люблю тебя всем сердцем.",
+      "ja": "心からあなたを愛しています。",
+      "ko": "온 마음을 다해 사랑해요.",
+      "zh": "我全心全意地爱你。"
+    },
+    "pronunciation": "ah-MOHR"
+  }
+]
+

@@ -1,5 +1,5 @@
-import { ChatMessage, Idiom } from '../types';
-import { LanguageCode, getIdiomMeaning } from '../utils/translations';
+import { ChatMessage, ContentItem } from '../types';
+import { LanguageCode } from '../utils/translations';
 
 /**
  * Language-specific quick reply options
@@ -65,11 +65,11 @@ const quickRepliesByLanguage: Record<LanguageCode, { id: string; text: string }[
 /**
  * Language-specific greeting templates
  */
-const greetingTemplates: Record<LanguageCode, (idiom: Idiom, meaning: string) => string> = {
-  en: (idiom, meaning) => 
-    `Hello! 👋 I'm your English teacher.\n\nToday we'll learn: "${idiom.idiom}"!\n\n📚 Meaning: ${meaning}\n\n🇬🇧 Example: "${idiom.example}"\n\nTry making a sentence using this idiom! Use the buttons below if you need help. 💪`,
-  tr: (idiom, meaning) => 
-    `Merhaba! 👋 Ben senin İngilizce öğretmeninim.\n\nBugün "${idiom.idiom}" deyimini öğreneceğiz!\n\n🇹🇷 Türkçesi: ${meaning}\n\n🇬🇧 Örnek: "${idiom.example}"\n\nHaydi, bu deyimi kullanarak bir İngilizce cümle yazmayı dene! Yardıma ihtiyacın olursa aşağıdaki butonları kullanabilirsin. 💪`,
+const greetingTemplates: Record<LanguageCode, (word: ContentItem, meaning: string, targetLang: string) => string> = {
+  en: (word, meaning, targetLang) => 
+    `Hello! 👋 I'm your ${targetLang.toUpperCase()} teacher.\n\nToday we'll learn: "${word.target_word}"!\n\n📚 Meaning: ${meaning}\n\n🇬🇧 Example: "${word.example_sentence}"\n\nTry making a sentence using this word! Use the buttons below if you need help. 💪`,
+  tr: (word, meaning, targetLang) => 
+    `Merhaba! 👋 Ben senin ${targetLang.toUpperCase()} öğretmeninim.\n\nBugün "${word.target_word}" kelimesini öğreneceğiz!\n\n🇹🇷 Türkçesi: ${meaning}\n\n📝 Örnek: "${word.example_sentence}"\n\nHaydi, bu kelimeyi kullanarak bir cümle yazmayı dene! Yardıma ihtiyacın olursa aşağıdaki butonları kullanabilirsin. 💪`,
   es: (idiom, meaning) => 
     `¡Hola! 👋 Soy tu profesor de inglés.\n\nHoy aprenderemos: "${idiom.idiom}"!\n\n📚 Significado: ${meaning}\n\n🇬🇧 Ejemplo: "${idiom.example}"\n\n¡Intenta hacer una oración usando esta expresión! Usa los botones de abajo si necesitas ayuda. 💪`,
   de: (idiom, meaning) => 
@@ -94,46 +94,46 @@ const greetingTemplates: Record<LanguageCode, (idiom: Idiom, meaning: string) =>
  * Language-specific response templates
  */
 const responseTemplates: Record<LanguageCode, {
-  exampleRequest: (idiom: Idiom) => string;
-  meaningRequest: (idiom: Idiom, meaning: string) => string;
-  pronunciationRequest: (idiom: Idiom) => string;
+  exampleRequest: (word: ContentItem) => string;
+  meaningRequest: (word: ContentItem, meaning: string) => string;
+  pronunciationRequest: (word: ContentItem) => string;
   correctUsage: string[];
-  encouragement: (idiom: Idiom) => string[];
-  shortMessage: (idiom: Idiom) => string;
+  encouragement: (word: ContentItem) => string[];
+  shortMessage: (word: ContentItem) => string;
 }> = {
   en: {
-    exampleRequest: (idiom) => `Sure! Here's another example with "${idiom.idiom}":\n\n🇬🇧 "I realized I had to ${idiom.idiom.toLowerCase().replace('the ', '')} and take action."\n\nNow try writing your own sentence! 💪`,
-    meaningRequest: (idiom, meaning) => `"${idiom.idiom}" means:\n\n📚 ${meaning}\n\nYou can use this idiom in everyday conversation! Want to try making a sentence?`,
-    pronunciationRequest: (idiom) => `"${idiom.idiom}" is pronounced:\n\n🔊 ${idiom.pronunciation || idiom.idiom.toLowerCase()}\n\nRepeat it slowly and try using it in a sentence!`,
+    exampleRequest: (word) => `Sure! Here's another example with "${word.target_word}":\n\n📝 "${word.example_sentence}"\n\nNow try writing your own sentence! 💪`,
+    meaningRequest: (word, meaning) => `"${word.target_word}" means:\n\n📚 ${meaning}\n\nYou can use this word in everyday conversation! Want to try making a sentence?`,
+    pronunciationRequest: (word) => `"${word.target_word}" is pronounced:\n\n🔊 ${word.pronunciation || word.target_word.toLowerCase()}\n\nRepeat it slowly and try using it in a sentence!`,
     correctUsage: [
       'Great job! 🎉 You used the idiom correctly! Your sentence is excellent. Want to try another one?',
       'Perfect! ⭐ You used the idiom in the right context. Your English is improving!',
       'Well done! 👏 That sentence sounds very natural. Can you write one more?',
       'Bravo! 🌟 You used it perfectly. Keep going, you\'re doing great!',
     ],
-    encouragement: (idiom) => [
-      `Keep going! 💪 Try adding "${idiom.idiom}" to your sentence.`,
-      `Good effort! 📝 Try using this idiom in a daily situation.`,
-      `Great try! 🌟 Tell me about a situation where you could use "${idiom.idiom}".`,
+    encouragement: (word) => [
+      `Keep going! 💪 Try adding "${word.target_word}" to your sentence.`,
+      `Good effort! 📝 Try using this word in a daily situation.`,
+      `Great try! 🌟 Tell me about a situation where you could use "${word.target_word}".`,
     ],
-    shortMessage: (idiom) => `Try writing a longer sentence! Use "${idiom.idiom}" in an English sentence. I'm here to help! 😊`,
+    shortMessage: (word) => `Try writing a longer sentence! Use "${word.target_word}" in a sentence. I'm here to help! 😊`,
   },
   tr: {
-    exampleRequest: (idiom) => `Tabii! İşte "${idiom.idiom}" ile başka bir örnek cümle:\n\n🇬🇧 "I realized I had to ${idiom.idiom.toLowerCase().replace('the ', '')} and take action."\n\nŞimdi sen de kendi cümleni yazmayı dene! 💪`,
-    meaningRequest: (idiom, meaning) => `"${idiom.idiom}" deyiminin Türkçe karşılığı:\n\n🇹🇷 ${meaning}\n\nBu deyimi günlük konuşmada sıkça kullanabilirsin! Bir cümle kurmayı dener misin?`,
-    pronunciationRequest: (idiom) => `"${idiom.idiom}" şöyle telaffuz edilir:\n\n🔊 ${idiom.pronunciation || idiom.idiom.toLowerCase()}\n\nYavaşça tekrar et ve cümle içinde kullanmayı dene!`,
+    exampleRequest: (word) => `Tabii! İşte "${word.target_word}" ile başka bir örnek cümle:\n\n📝 "${word.example_sentence}"\n\nŞimdi sen de kendi cümleni yazmayı dene! 💪`,
+    meaningRequest: (word, meaning) => `"${word.target_word}" kelimesinin Türkçe karşılığı:\n\n🇹🇷 ${meaning}\n\nBu kelimeyi günlük konuşmada sıkça kullanabilirsin! Bir cümle kurmayı dener misin?`,
+    pronunciationRequest: (word) => `"${word.target_word}" şöyle telaffuz edilir:\n\n🔊 ${word.pronunciation || word.target_word.toLowerCase()}\n\nYavaşça tekrar et ve cümle içinde kullanmayı dene!`,
     correctUsage: [
       'Harika! 🎉 Deyimi doğru kullandın! Cümlen çok güzel olmuş. Başka bir örnek dener misin?',
       'Mükemmel! ⭐ Deyimi tam yerinde kullandın. İngilizce\'n gelişiyor!',
       'Çok iyi! 👏 Bu cümle çok doğal olmuş. Bir tane daha yazar mısın?',
       'Bravo! 🌟 Deyimi harika kullanmışsın. Devam et, çok iyi gidiyorsun!',
     ],
-    encouragement: (idiom) => [
-      `İyi gidiyorsun! 💪 "${idiom.idiom}" deyimini cümlenin içine eklemeyi dene.`,
-      `Devam et! 📝 Bu deyimi günlük bir durumu anlatırken kullanabilirsin.`,
-      `Harika çaba! 🌟 "${idiom.idiom}" deyimini kullanarak kendi deneyiminden bir örnek ver.`,
+    encouragement: (word) => [
+      `İyi gidiyorsun! 💪 "${word.target_word}" kelimesini cümlenin içine eklemeyi dene.`,
+      `Devam et! 📝 Bu kelimeyi günlük bir durumu anlatırken kullanabilirsin.`,
+      `Harika çaba! 🌟 "${word.target_word}" kelimesini kullanarak kendi deneyiminden bir örnek ver.`,
     ],
-    shortMessage: (idiom) => `Daha uzun bir cümle kurmayı dene! "${idiom.idiom}" deyimini kullanarak bir İngilizce cümle yaz. Yardıma ihtiyacın olursa buradayım! 😊`,
+    shortMessage: (word) => `Daha uzun bir cümle kurmayı dene! "${word.target_word}" kelimesini kullanarak bir cümle yaz. Yardıma ihtiyacın olursa buradayım! 😊`,
   },
   es: {
     exampleRequest: (idiom) => `¡Claro! Aquí hay otro ejemplo con "${idiom.idiom}":\n\n🇬🇧 "I realized I had to ${idiom.idiom.toLowerCase().replace('the ', '')} and take action."\n\n¡Ahora intenta escribir tu propia oración! 💪`,
@@ -302,14 +302,14 @@ const generateMessageId = (): string => {
  */
 const getSimulatedResponse = (
   userMessage: string,
-  idiom: Idiom,
+  word: ContentItem,
   messageCount: number,
-  language: LanguageCode
+  nativeLanguage: LanguageCode,
+  meaning: string
 ): string => {
   const lowerMessage = userMessage.toLowerCase();
-  const idiomLower = idiom.idiom.toLowerCase();
-  const templates = responseTemplates[language] || responseTemplates['en'];
-  const meaning = getIdiomMeaning(idiom.id, language, idiom.meaningTR);
+  const wordLower = word.target_word.toLowerCase();
+  const templates = responseTemplates[nativeLanguage] || responseTemplates['en'];
 
   // Check for quick reply requests
   const exampleKeywords = ['örnek', 'example', 'ejemplo', 'beispiel', 'exemple', 'exemplo', 'esempio', 'пример', '例', '예문'];
@@ -317,34 +317,34 @@ const getSimulatedResponse = (
   const pronunciationKeywords = ['telaffuz', 'pronunciation', 'pronuncia', 'ausspr', 'prononce', 'произнос', '発音', '발음', '发音'];
 
   if (exampleKeywords.some(kw => lowerMessage.includes(kw))) {
-    return templates.exampleRequest(idiom);
+    return templates.exampleRequest(word);
   }
 
   if (meaningKeywords.some(kw => lowerMessage.includes(kw))) {
-    return templates.meaningRequest(idiom, meaning);
+    return templates.meaningRequest(word, meaning);
   }
 
   if (pronunciationKeywords.some(kw => lowerMessage.includes(kw))) {
-    return templates.pronunciationRequest(idiom);
+    return templates.pronunciationRequest(word);
   }
 
-  // Check if user used the idiom in their message
-  const idiomWords = idiomLower.split(' ');
-  const usedIdiom = idiomWords.some(word => 
-    word.length > 3 && lowerMessage.includes(word)
+  // Check if user used the word in their message
+  const wordWords = wordLower.split(' ');
+  const usedWord = wordWords.some(w => 
+    w.length > 2 && lowerMessage.includes(w)
   );
 
-  if (usedIdiom || lowerMessage.includes(idiomLower)) {
+  if (usedWord || lowerMessage.includes(wordLower)) {
     return templates.correctUsage[Math.floor(Math.random() * templates.correctUsage.length)];
   }
 
   // If message is very short
   if (userMessage.length < 10) {
-    return templates.shortMessage(idiom);
+    return templates.shortMessage(word);
   }
 
   // General encouraging responses
-  const encouragements = templates.encouragement(idiom);
+  const encouragements = templates.encouragement(word);
   return encouragements[Math.floor(Math.random() * encouragements.length)];
 };
 
@@ -360,18 +360,21 @@ export const getQuickReplyOptions = (language: LanguageCode) => {
  */
 export const getAIResponse = async (
   userMessage: string,
-  idiom: Idiom,
+  word: ContentItem,
   conversationHistory: ChatMessage[],
-  language: LanguageCode
+  nativeLanguage: LanguageCode,
+  targetLanguage: LanguageCode,
+  wordMeaning: string
 ): Promise<ChatMessage> => {
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 800));
 
   const responseText = getSimulatedResponse(
     userMessage,
-    idiom,
+    word,
     conversationHistory.length,
-    language
+    nativeLanguage,
+    wordMeaning
   );
 
   return {
@@ -397,14 +400,18 @@ export const createUserMessage = (content: string): ChatMessage => {
 /**
  * Get initial greeting message from AI
  */
-export const getInitialGreeting = (idiom: Idiom, language: LanguageCode): ChatMessage => {
-  const greetingFn = greetingTemplates[language] || greetingTemplates['en'];
-  const meaning = getIdiomMeaning(idiom.id, language, idiom.meaningTR);
+export const getInitialGreeting = (
+  word: ContentItem, 
+  nativeLanguage: LanguageCode, 
+  targetLanguage: LanguageCode,
+  wordMeaning: string
+): ChatMessage => {
+  const greetingFn = greetingTemplates[nativeLanguage] || greetingTemplates['en'];
 
   return {
     id: generateMessageId(),
     role: 'assistant',
-    content: greetingFn(idiom, meaning),
+    content: greetingFn(word, wordMeaning, targetLanguage),
     timestamp: new Date(),
   };
 };

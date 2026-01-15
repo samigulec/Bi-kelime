@@ -1,51 +1,57 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { LogBox, View, ActivityIndicator, StyleSheet } from 'react-native';
+import { LogBox, ActivityIndicator, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import HomeScreen from './src/screens/HomeScreen';
 import ChatScreen from './src/screens/ChatScreen';
-import LanguageSelectScreen from './src/screens/LanguageSelectScreen';
-import { Idiom } from './src/types';
+import OnboardingScreen from './src/screens/OnboardingScreen';
+import { ContentItem } from './src/types';
 import { LanguageCode } from './src/utils/translations';
-import { getUserLanguage, saveUserLanguage } from './src/utils/storage';
+import { getLanguagePreferences, saveLanguagePreferences } from './src/utils/storage';
 
 LogBox.ignoreLogs(['Non-serializable values']);
 
-type Screen = 'Loading' | 'LanguageSelect' | 'Home' | 'Chat';
+type Screen = 'Loading' | 'Onboarding' | 'Home' | 'Chat';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('Loading');
-  const [selectedIdiom, setSelectedIdiom] = useState<Idiom | null>(null);
-  const [userLanguage, setUserLanguage] = useState<LanguageCode>('en');
+  const [selectedWord, setSelectedWord] = useState<ContentItem | null>(null);
+  const [nativeLanguage, setNativeLanguage] = useState<LanguageCode>('en');
+  const [targetLanguage, setTargetLanguage] = useState<LanguageCode>('es');
 
   useEffect(() => {
-    checkUserLanguage();
+    checkLanguagePreferences();
   }, []);
 
-  const checkUserLanguage = async () => {
-    const savedLanguage = await getUserLanguage();
-    if (savedLanguage) {
-      setUserLanguage(savedLanguage);
+  const checkLanguagePreferences = async () => {
+    const savedPreferences = await getLanguagePreferences();
+    if (savedPreferences) {
+      setNativeLanguage(savedPreferences.nativeLanguage as LanguageCode);
+      setTargetLanguage(savedPreferences.targetLanguage as LanguageCode);
       setCurrentScreen('Home');
     } else {
-      setCurrentScreen('LanguageSelect');
+      setCurrentScreen('Onboarding');
     }
   };
 
-  const handleLanguageSelected = async (languageCode: LanguageCode) => {
-    await saveUserLanguage(languageCode);
-    setUserLanguage(languageCode);
+  const handleOnboardingComplete = async (native: LanguageCode, target: LanguageCode) => {
+    await saveLanguagePreferences({
+      nativeLanguage: native,
+      targetLanguage: target,
+    });
+    setNativeLanguage(native);
+    setTargetLanguage(target);
     setCurrentScreen('Home');
   };
 
-  const navigateToChat = (idiom: Idiom) => {
-    setSelectedIdiom(idiom);
+  const navigateToChat = (word: ContentItem) => {
+    setSelectedWord(word);
     setCurrentScreen('Chat');
   };
 
   const navigateToHome = () => {
     setCurrentScreen('Home');
-    setSelectedIdiom(null);
+    setSelectedWord(null);
   };
 
   // Loading screen
@@ -61,20 +67,22 @@ export default function App() {
   return (
     <>
       <StatusBar style="dark" />
-      {currentScreen === 'LanguageSelect' && (
-        <LanguageSelectScreen onLanguageSelected={handleLanguageSelected} />
+      {currentScreen === 'Onboarding' && (
+        <OnboardingScreen onComplete={handleOnboardingComplete} />
       )}
       {currentScreen === 'Home' && (
         <HomeScreen 
           onNavigateToChat={navigateToChat} 
-          language={userLanguage}
+          nativeLanguage={nativeLanguage}
+          targetLanguage={targetLanguage}
         />
       )}
-      {currentScreen === 'Chat' && selectedIdiom && (
+      {currentScreen === 'Chat' && selectedWord && (
         <ChatScreen 
-          idiom={selectedIdiom} 
+          word={selectedWord} 
           onNavigateBack={navigateToHome}
-          language={userLanguage}
+          nativeLanguage={nativeLanguage}
+          targetLanguage={targetLanguage}
         />
       )}
     </>
