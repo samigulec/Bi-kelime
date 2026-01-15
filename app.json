@@ -1,27 +1,27 @@
 {
   "expo": {
-    "name": "DailyIdiomApp",
-    "slug": "DailyIdiomApp",
+    "name": "Bi'Kelime",
+    "slug": "bikelime",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#E8F4FC"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bikelime.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#E8F4FC"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "package": "com.bikelime.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"

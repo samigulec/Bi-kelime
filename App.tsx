@@ -1,20 +1,39 @@
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { LogBox } from 'react-native';
+import HomeScreen from './src/screens/HomeScreen';
+import ChatScreen from './src/screens/ChatScreen';
+import { Idiom } from './src/types';
+
+LogBox.ignoreLogs(['Non-serializable values']);
 
 export default function App() {
+  const [currentScreen, setCurrentScreen] = useState<'Home' | 'Chat'>('Home');
+  const [selectedIdiom, setSelectedIdiom] = useState<Idiom | null>(null);
+
+  const navigateToChat = (idiom: Idiom) => {
+    setSelectedIdiom(idiom);
+    setCurrentScreen('Chat');
+  };
+
+  const navigateToHome = () => {
+    setCurrentScreen('Home');
+    setSelectedIdiom(null);
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <>
+      <StatusBar style="light" />
+      {currentScreen === 'Home' ? (
+        <HomeScreen onNavigateToChat={navigateToChat} />
+      ) : (
+        selectedIdiom && (
+          <ChatScreen 
+            idiom={selectedIdiom} 
+            onNavigateBack={navigateToHome} 
+          />
+        )
+      )}
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
