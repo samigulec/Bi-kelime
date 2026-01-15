@@ -52,6 +52,43 @@ const Cloud: React.FC<{ delay: number; top: number; size: number; duration: numb
   );
 };
 
+// Language Item Component
+const LanguageItem: React.FC<{
+  item: Language;
+  isSelected: boolean;
+  onSelect: (lang: Language) => void;
+}> = ({ item, isSelected, onSelect }) => {
+  const itemScale = useRef(new Animated.Value(1)).current;
+
+  const handlePress = () => {
+    Animated.sequence([
+      Animated.spring(itemScale, { toValue: 0.9, useNativeDriver: true }),
+      Animated.spring(itemScale, { toValue: 1.05, useNativeDriver: true }),
+      Animated.spring(itemScale, { toValue: 1, useNativeDriver: true }),
+    ]).start();
+    onSelect(item);
+  };
+
+  return (
+    <Animated.View style={{ transform: [{ scale: itemScale }] }}>
+      <TouchableOpacity
+        style={[
+          styles.languageItem,
+          isSelected && styles.languageItemSelected,
+        ]}
+        onPress={handlePress}
+        activeOpacity={0.8}
+      >
+        <Text style={styles.flagEmoji}>{item.flag}</Text>
+        <Text style={[styles.languageName, isSelected && styles.languageNameSelected]}>
+          {item.nativeName}
+        </Text>
+        {isSelected && <Text style={styles.checkEmoji}>✓</Text>}
+      </TouchableOpacity>
+    </Animated.View>
+  );
+};
+
 const LanguageSelectScreen: React.FC<LanguageSelectScreenProps> = ({ onLanguageSelected }) => {
   const [selectedLanguage, setSelectedLanguage] = useState<LanguageCode | null>(null);
   
@@ -109,35 +146,12 @@ const LanguageSelectScreen: React.FC<LanguageSelectScreenProps> = ({ onLanguageS
   });
 
   const renderLanguageItem = ({ item, index }: { item: Language; index: number }) => {
-    const isSelected = selectedLanguage === item.code;
-    const itemScale = useRef(new Animated.Value(1)).current;
-
-    const handlePress = () => {
-      Animated.sequence([
-        Animated.spring(itemScale, { toValue: 0.9, useNativeDriver: true }),
-        Animated.spring(itemScale, { toValue: 1.05, useNativeDriver: true }),
-        Animated.spring(itemScale, { toValue: 1, useNativeDriver: true }),
-      ]).start();
-      handleLanguageSelect(item);
-    };
-
     return (
-      <Animated.View style={{ transform: [{ scale: itemScale }] }}>
-        <TouchableOpacity
-          style={[
-            styles.languageItem,
-            isSelected && styles.languageItemSelected,
-          ]}
-          onPress={handlePress}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.flagEmoji}>{item.flag}</Text>
-          <Text style={[styles.languageName, isSelected && styles.languageNameSelected]}>
-            {item.nativeName}
-          </Text>
-          {isSelected && <Text style={styles.checkEmoji}>✓</Text>}
-        </TouchableOpacity>
-      </Animated.View>
+      <LanguageItem
+        item={item}
+        isSelected={selectedLanguage === item.code}
+        onSelect={handleLanguageSelect}
+      />
     );
   };
 
