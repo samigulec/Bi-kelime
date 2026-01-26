@@ -20,55 +20,50 @@ type OnboardingScreenProps = {
   onComplete: (nativeLanguage: LanguageCode, targetLanguage: LanguageCode, level: ProficiencyLevel) => void;
 };
 
-// Proficiency Level data
-interface LevelInfo {
-  code: ProficiencyLevel;
-  name: string;
-  description: string;
+// Simplified level data - maps to actual CEFR levels internally
+interface SimplifiedLevel {
+  id: 'beginner' | 'intermediate' | 'advanced';
   emoji: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  cerfLevel: ProficiencyLevel; // Internal mapping
+  color: string;
+  bgColor: string;
 }
 
-const LEVELS: LevelInfo[] = [
-  { code: 'A1', name: 'Beginner', description: 'Just starting out', emoji: '🌱' },
-  { code: 'A2', name: 'Elementary', description: 'Basic phrases', emoji: '🌿' },
-  { code: 'B1', name: 'Intermediate', description: 'Everyday topics', emoji: '🌳' },
-  { code: 'B2', name: 'Upper Intermediate', description: 'Complex discussions', emoji: '🌲' },
-  { code: 'C1', name: 'Advanced', description: 'Fluent expression', emoji: '🏔️' },
-  { code: 'C2', name: 'Mastery', description: 'Native-like proficiency', emoji: '⭐' },
+const SIMPLIFIED_LEVELS: SimplifiedLevel[] = [
+  { 
+    id: 'beginner',
+    emoji: '🌱', 
+    title: 'Beginner',
+    subtitle: 'Just starting out',
+    description: 'Basic words like "Hello", "Thank you"',
+    cerfLevel: 'A1',
+    color: '#4CAF50',
+    bgColor: '#E8F5E9'
+  },
+  { 
+    id: 'intermediate',
+    emoji: '📚', 
+    title: 'Intermediate',
+    subtitle: 'I know the basics',
+    description: 'Everyday conversations',
+    cerfLevel: 'B1',
+    color: '#FF9800',
+    bgColor: '#FFF3E0'
+  },
+  { 
+    id: 'advanced',
+    emoji: '🚀', 
+    title: 'Advanced',
+    subtitle: 'I\'m quite confident',
+    description: 'Complex topics & expressions',
+    cerfLevel: 'C1',
+    color: '#9C27B0',
+    bgColor: '#F3E5F5'
+  },
 ];
-
-// Animated Cloud Component
-const Cloud: React.FC<{ delay: number; top: number; size: number; duration: number }> = ({ 
-  delay, top, size, duration 
-}) => {
-  const translateX = useRef(new Animated.Value(-200)).current;
-
-  useEffect(() => {
-    const animate = () => {
-      translateX.setValue(-200);
-      Animated.timing(translateX, {
-        toValue: width + 200,
-        duration: duration,
-        delay: delay,
-        useNativeDriver: true,
-      }).start(() => animate());
-    };
-    animate();
-  }, []);
-
-  return (
-    <Animated.View 
-      style={[
-        styles.cloud, 
-        { top, width: size, height: size * 0.5, transform: [{ translateX }] }
-      ]}
-    >
-      <View style={[styles.cloudPuff, { width: size * 0.5, height: size * 0.5, left: 0, bottom: 0 }]} />
-      <View style={[styles.cloudPuff, { width: size * 0.6, height: size * 0.6, left: size * 0.25, bottom: size * 0.15 }]} />
-      <View style={[styles.cloudPuff, { width: size * 0.45, height: size * 0.45, right: 0, bottom: 0 }]} />
-    </Animated.View>
-  );
-};
 
 // Language Item Component
 const LanguageItem: React.FC<{
@@ -80,9 +75,8 @@ const LanguageItem: React.FC<{
 
   const handlePress = () => {
     Animated.sequence([
-      Animated.spring(itemScale, { toValue: 0.9, useNativeDriver: true }),
-      Animated.spring(itemScale, { toValue: 1.05, useNativeDriver: true }),
-      Animated.spring(itemScale, { toValue: 1, useNativeDriver: true }),
+      Animated.spring(itemScale, { toValue: 0.92, useNativeDriver: true }),
+      Animated.spring(itemScale, { toValue: 1, friction: 4, useNativeDriver: true }),
     ]).start();
     onSelect(item);
   };
@@ -101,52 +95,59 @@ const LanguageItem: React.FC<{
         <Text style={[styles.languageName, isSelected && styles.languageNameSelected]}>
           {item.nativeName}
         </Text>
-        {isSelected && <Text style={styles.checkEmoji}>✓</Text>}
+        {isSelected && (
+          <View style={styles.checkBadge}>
+            <Text style={styles.checkMark}>✓</Text>
+          </View>
+        )}
       </TouchableOpacity>
     </Animated.View>
   );
 };
 
-// Level Item Component
-const LevelItem: React.FC<{
-  item: LevelInfo;
+// Level Card Component
+const LevelCard: React.FC<{
+  item: SimplifiedLevel;
   isSelected: boolean;
-  onSelect: (level: LevelInfo) => void;
+  onSelect: (level: SimplifiedLevel) => void;
 }> = ({ item, isSelected, onSelect }) => {
-  const itemScale = useRef(new Animated.Value(1)).current;
+  const cardScale = useRef(new Animated.Value(1)).current;
 
   const handlePress = () => {
     Animated.sequence([
-      Animated.spring(itemScale, { toValue: 0.95, useNativeDriver: true }),
-      Animated.spring(itemScale, { toValue: 1.02, useNativeDriver: true }),
-      Animated.spring(itemScale, { toValue: 1, useNativeDriver: true }),
+      Animated.spring(cardScale, { toValue: 0.95, useNativeDriver: true }),
+      Animated.spring(cardScale, { toValue: 1, friction: 4, useNativeDriver: true }),
     ]).start();
     onSelect(item);
   };
 
   return (
-    <Animated.View style={{ transform: [{ scale: itemScale }] }}>
+    <Animated.View style={{ transform: [{ scale: cardScale }] }}>
       <TouchableOpacity
         style={[
-          styles.levelItem,
-          isSelected && styles.levelItemSelected,
+          styles.levelCard,
+          { backgroundColor: isSelected ? item.bgColor : '#FFFFFF', borderColor: isSelected ? item.color : 'transparent' },
         ]}
         onPress={handlePress}
-        activeOpacity={0.8}
+        activeOpacity={0.85}
       >
-        <View style={styles.levelLeft}>
+        <View style={styles.levelCardContent}>
           <Text style={styles.levelEmoji}>{item.emoji}</Text>
-          <View style={styles.levelTextContainer}>
-            <View style={styles.levelHeader}>
-              <Text style={[styles.levelCode, isSelected && styles.levelCodeSelected]}>{item.code}</Text>
-              <Text style={[styles.levelName, isSelected && styles.levelNameSelected]}>{item.name}</Text>
-            </View>
-            <Text style={[styles.levelDescription, isSelected && styles.levelDescriptionSelected]}>
-              {item.description}
+          <View style={styles.levelTextContent}>
+            <Text style={[styles.levelTitle, { color: isSelected ? item.color : '#3D5A80' }]}>
+              {item.title}
             </Text>
+            <Text style={[styles.levelSubtitle, { color: isSelected ? item.color : '#78909C' }]}>
+              {item.subtitle}
+            </Text>
+            <Text style={styles.levelDescription}>{item.description}</Text>
           </View>
+          {isSelected && (
+            <View style={[styles.levelCheckBadge, { backgroundColor: item.color }]}>
+              <Text style={styles.levelCheckMark}>✓</Text>
+            </View>
+          )}
         </View>
-        {isSelected && <Text style={styles.checkEmojiLevel}>✓</Text>}
       </TouchableOpacity>
     </Animated.View>
   );
@@ -156,53 +157,28 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [nativeLanguage, setNativeLanguage] = useState<LanguageCode | null>(null);
   const [targetLanguage, setTargetLanguage] = useState<LanguageCode | null>(null);
-  const [proficiencyLevel, setProficiencyLevel] = useState<ProficiencyLevel | null>(null);
+  const [selectedLevel, setSelectedLevel] = useState<SimplifiedLevel | null>(null);
   
   // Animations
-  const titleWiggle = useRef(new Animated.Value(0)).current;
-  const continueButtonScale = useRef(new Animated.Value(0)).current;
-  const continueButtonOpacity = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const slideAnim = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    // Title wiggle animation
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(titleWiggle, {
-          toValue: 1,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(titleWiggle, {
-          toValue: 0,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, []);
-
-  useEffect(() => {
-    // Show/hide continue button
-    const shouldShow = 
-      (step === 1 && nativeLanguage) || 
-      (step === 2 && targetLanguage) ||
-      (step === 3 && proficiencyLevel);
-    
+  const animateTransition = (callback: () => void) => {
     Animated.parallel([
-      Animated.spring(continueButtonScale, {
-        toValue: shouldShow ? 1 : 0,
-        useNativeDriver: true,
-      }),
-      Animated.timing(continueButtonOpacity, {
-        toValue: shouldShow ? 1 : 0,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [step, nativeLanguage, targetLanguage, proficiencyLevel]);
+      Animated.timing(fadeAnim, { toValue: 0, duration: 150, useNativeDriver: true }),
+      Animated.timing(slideAnim, { toValue: -30, duration: 150, useNativeDriver: true }),
+    ]).start(() => {
+      callback();
+      slideAnim.setValue(30);
+      Animated.parallel([
+        Animated.timing(fadeAnim, { toValue: 1, duration: 200, useNativeDriver: true }),
+        Animated.timing(slideAnim, { toValue: 0, duration: 200, useNativeDriver: true }),
+      ]).start();
+    });
+  };
 
   const handleLanguageSelect = (lang: Language) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     
     if (step === 1) {
       setNativeLanguage(lang.code);
@@ -215,68 +191,67 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
     }
   };
 
-  const handleLevelSelect = (level: LevelInfo) => {
+  const handleLevelSelect = (level: SimplifiedLevel) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    setProficiencyLevel(level.code);
+    setSelectedLevel(level);
   };
 
   const handleContinue = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     
     if (step === 1 && nativeLanguage) {
-      setStep(2);
+      animateTransition(() => setStep(2));
     } else if (step === 2 && targetLanguage) {
-      setStep(3);
-    } else if (step === 3 && proficiencyLevel && nativeLanguage && targetLanguage) {
-      onComplete(nativeLanguage, targetLanguage, proficiencyLevel);
+      animateTransition(() => setStep(3));
+    } else if (step === 3 && selectedLevel && nativeLanguage && targetLanguage) {
+      onComplete(nativeLanguage, targetLanguage, selectedLevel.cerfLevel);
     }
   };
 
   const handleBack = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (step === 2) {
-      setStep(1);
-      setTargetLanguage(null);
+      animateTransition(() => {
+        setStep(1);
+        setTargetLanguage(null);
+      });
     } else if (step === 3) {
-      setStep(2);
-      setProficiencyLevel(null);
+      animateTransition(() => {
+        setStep(2);
+        setSelectedLevel(null);
+      });
     }
   };
 
-  const titleRotate = titleWiggle.interpolate({
-    inputRange: [0, 0.5, 1],
-    outputRange: ['-1deg', '1deg', '-1deg'],
-  });
+  const canContinue = 
+    (step === 1 && nativeLanguage) || 
+    (step === 2 && targetLanguage) ||
+    (step === 3 && selectedLevel);
 
-  const getTitle = () => {
+  const getStepContent = () => {
     switch (step) {
-      case 1: return 'I speak...';
-      case 2: return 'I want to learn...';
-      case 3: return 'My level is...';
+      case 1:
+        return {
+          emoji: '👋',
+          title: 'Welcome!',
+          subtitle: 'What language do you speak?',
+        };
+      case 2:
+        return {
+          emoji: '🎯',
+          title: 'Great choice!',
+          subtitle: 'What do you want to learn?',
+        };
+      case 3:
+        return {
+          emoji: '📊',
+          title: 'Almost done!',
+          subtitle: 'What\'s your current level?',
+        };
     }
   };
 
-  const getSubtitle = () => {
-    switch (step) {
-      case 1: return '¿Qué idioma hablas? • Welche Sprache sprichst du?';
-      case 2: return '¿Qué quieres aprender? • Was möchtest du lernen?';
-      case 3: return 'Select your current proficiency level';
-    }
-  };
-
-  const getEmoji = () => {
-    switch (step) {
-      case 1: return '🌍';
-      case 2: return '📚';
-      case 3: return '📊';
-    }
-  };
-
-  const getContinueText = () => {
-    if (step === 3) return "Let's Go! 🚀";
-    return 'Continue →';
-  };
-
+  const content = getStepContent();
   const availableLanguages = step === 2 
     ? LANGUAGES.filter(lang => lang.code !== nativeLanguage)
     : LANGUAGES;
@@ -289,99 +264,84 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
     />
   );
 
-  const renderLevelItem = ({ item }: { item: LevelInfo }) => (
-    <LevelItem
-      item={item}
-      isSelected={proficiencyLevel === item.code}
-      onSelect={handleLevelSelect}
-    />
-  );
-
   return (
-    <LinearGradient colors={['#E0F4FF', '#C5EBFF', '#B8E4FF']} style={styles.container}>
-      {/* Animated Clouds */}
-      <Cloud delay={0} top={60} size={100} duration={25000} />
-      <Cloud delay={5000} top={120} size={80} duration={30000} />
-      <Cloud delay={10000} top={40} size={90} duration={28000} />
-
+    <LinearGradient colors={['#667eea', '#764ba2']} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-        {/* Header */}
-        <View style={styles.header}>
-          {step > 1 && (
-            <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-              <Text style={styles.backArrow}>←</Text>
-            </TouchableOpacity>
-          )}
-          <View style={styles.headerContent}>
-            <Text style={styles.stepIndicator}>Step {step} of 3</Text>
-            <Text style={styles.logoEmoji}>{getEmoji()}</Text>
-            <Animated.View style={{ transform: [{ rotate: titleRotate }] }}>
-              <Text style={styles.title}>{getTitle()}</Text>
-              <Text style={styles.titleAlt}>{getSubtitle()}</Text>
-            </Animated.View>
+        {/* Progress Bar */}
+        <View style={styles.progressContainer}>
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: `${(step / 3) * 100}%` }]} />
           </View>
+          <Text style={styles.progressText}>{step}/3</Text>
         </View>
 
-        {/* Step Info */}
-        {step === 2 && (
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoText}>
-              🎯 Select a language different from your native language
-            </Text>
-          </View>
+        {/* Back Button */}
+        {step > 1 && (
+          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+            <Text style={styles.backArrow}>←</Text>
+          </TouchableOpacity>
         )}
 
-        {step === 3 && (
-          <View style={styles.infoContainerLevel}>
-            <Text style={styles.infoTextLevel}>
-              💡 We'll show you words matching your level
-            </Text>
-          </View>
-        )}
-
-        {/* Content - Using key prop to force fresh render when step changes */}
-        {step < 3 ? (
-          <FlatList
-            key={`language-list-step-${step}`}
-            data={availableLanguages}
-            renderItem={renderLanguageItem}
-            keyExtractor={(item) => item.code}
-            numColumns={2}
-            contentContainerStyle={styles.languageGrid}
-            showsVerticalScrollIndicator={false}
-            columnWrapperStyle={styles.columnWrapper}
-          />
-        ) : (
-          <FlatList
-            key="level-list"
-            data={LEVELS}
-            renderItem={renderLevelItem}
-            keyExtractor={(item) => item.code}
-            contentContainerStyle={styles.levelGrid}
-            showsVerticalScrollIndicator={false}
-          />
-        )}
-
-        {/* Continue Button */}
+        {/* Header */}
         <Animated.View 
           style={[
-            styles.continueButtonWrapper,
-            { 
-              opacity: continueButtonOpacity,
-              transform: [{ scale: continueButtonScale }] 
-            }
+            styles.header, 
+            { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }
           ]}
         >
+          <Text style={styles.headerEmoji}>{content.emoji}</Text>
+          <Text style={styles.headerTitle}>{content.title}</Text>
+          <Text style={styles.headerSubtitle}>{content.subtitle}</Text>
+        </Animated.View>
+
+        {/* Content */}
+        <Animated.View 
+          style={[
+            styles.contentContainer, 
+            { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }
+          ]}
+        >
+          {step < 3 ? (
+            <FlatList
+              key={`language-list-step-${step}`}
+              data={availableLanguages}
+              renderItem={renderLanguageItem}
+              keyExtractor={(item) => item.code}
+              numColumns={2}
+              contentContainerStyle={styles.languageGrid}
+              showsVerticalScrollIndicator={false}
+              columnWrapperStyle={styles.columnWrapper}
+            />
+          ) : (
+            <View style={styles.levelContainer}>
+              {SIMPLIFIED_LEVELS.map((level) => (
+                <LevelCard
+                  key={level.id}
+                  item={level}
+                  isSelected={selectedLevel?.id === level.id}
+                  onSelect={handleLevelSelect}
+                />
+              ))}
+            </View>
+          )}
+        </Animated.View>
+
+        {/* Continue Button */}
+        <View style={styles.bottomContainer}>
           <TouchableOpacity
-            style={styles.continueButton}
+            style={[
+              styles.continueButton,
+              !canContinue && styles.continueButtonDisabled
+            ]}
             onPress={handleContinue}
+            disabled={!canContinue}
             activeOpacity={0.9}
           >
             <Text style={styles.continueButtonText}>
-              {getContinueText()}
+              {step === 3 ? "Let's Start! 🚀" : 'Continue'}
             </Text>
           </TouchableOpacity>
-        </Animated.View>
+        </View>
       </SafeAreaView>
     </LinearGradient>
   );
@@ -394,131 +354,106 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
-  cloud: {
-    position: 'absolute',
-    zIndex: 1,
-  },
-  cloudPuff: {
-    position: 'absolute',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: 100,
-  },
-  header: {
+  
+  // Progress
+  progressContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 20,
-    paddingBottom: 15,
-    zIndex: 10,
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    paddingBottom: 8,
   },
+  progressBar: {
+    flex: 1,
+    height: 6,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    borderRadius: 3,
+    marginRight: 12,
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 3,
+  },
+  progressText: {
+    color: 'rgba(255,255,255,0.8)',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+
+  // Back Button
   backButton: {
     position: 'absolute',
     left: 20,
-    top: 25,
-    backgroundColor: '#FFFFFF',
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    top: 70,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#5B8FB9',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 4,
-    zIndex: 20,
+    zIndex: 10,
   },
   backArrow: {
-    fontSize: 24,
-    color: '#4A90B8',
-    fontWeight: '700',
+    fontSize: 22,
+    color: '#FFFFFF',
+    fontWeight: '600',
   },
-  headerContent: {
+
+  // Header
+  header: {
     alignItems: 'center',
+    paddingTop: 30,
+    paddingBottom: 24,
+    paddingHorizontal: 24,
   },
-  stepIndicator: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#7EC8E3',
-    marginBottom: 8,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
+  headerEmoji: {
+    fontSize: 50,
+    marginBottom: 16,
   },
-  logoEmoji: {
-    fontSize: 45,
-    marginBottom: 12,
-  },
-  title: {
-    fontSize: 26,
+  headerTitle: {
+    fontSize: 28,
     fontWeight: '800',
-    color: '#3D5A80',
-    textAlign: 'center',
-    lineHeight: 34,
+    color: '#FFFFFF',
+    marginBottom: 8,
   },
-  titleAlt: {
-    fontSize: 13,
+  headerSubtitle: {
+    fontSize: 18,
+    color: 'rgba(255,255,255,0.9)',
     fontWeight: '500',
-    color: '#7EC8E3',
-    textAlign: 'center',
-    marginTop: 8,
-    paddingHorizontal: 20,
-    lineHeight: 20,
   },
-  infoContainer: {
-    marginHorizontal: 24,
-    marginBottom: 12,
-    padding: 12,
-    backgroundColor: '#E8F5E9',
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#81C784',
-  },
-  infoText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#2E7D32',
-    textAlign: 'center',
-  },
-  infoContainerLevel: {
-    marginHorizontal: 24,
-    marginBottom: 12,
-    padding: 12,
-    backgroundColor: '#FFF3E0',
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#FFB74D',
-  },
-  infoTextLevel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#E65100',
-    textAlign: 'center',
+
+  // Content
+  contentContainer: {
+    flex: 1,
   },
   languageGrid: {
     paddingHorizontal: 16,
-    paddingBottom: 100,
+    paddingBottom: 20,
   },
   columnWrapper: {
     justifyContent: 'space-between',
     marginBottom: 12,
   },
+  
+  // Language Item
   languageItem: {
     width: (width - 48) / 2,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 18,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    borderRadius: 16,
+    padding: 16,
     alignItems: 'center',
-    shadowColor: '#5B8FB9',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 5,
+    elevation: 4,
     borderWidth: 3,
     borderColor: 'transparent',
   },
   languageItemSelected: {
-    backgroundColor: '#F0FFF4',
-    borderColor: '#7DDBA3',
-    shadowColor: '#38A169',
-    shadowOpacity: 0.3,
+    borderColor: '#4CAF50',
+    backgroundColor: '#FFFFFF',
   },
   flagEmoji: {
     fontSize: 36,
@@ -530,118 +465,104 @@ const styles = StyleSheet.create({
     color: '#3D5A80',
   },
   languageNameSelected: {
-    color: '#276749',
+    color: '#2E7D32',
   },
-  checkEmoji: {
+  checkBadge: {
     position: 'absolute',
-    top: 10,
-    right: 10,
-    fontSize: 16,
-    color: '#38A169',
+    top: 8,
+    right: 8,
+    backgroundColor: '#4CAF50',
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkMark: {
+    color: '#FFFFFF',
+    fontSize: 14,
     fontWeight: '800',
   },
-  // Level styles
-  levelGrid: {
+
+  // Level Cards
+  levelContainer: {
     paddingHorizontal: 20,
-    paddingBottom: 100,
   },
-  levelItem: {
-    backgroundColor: '#FFFFFF',
+  levelCard: {
     borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    shadowColor: '#5B8FB9',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6,
-    elevation: 4,
+    padding: 20,
+    marginBottom: 16,
     borderWidth: 3,
-    borderColor: 'transparent',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
   },
-  levelItemSelected: {
-    backgroundColor: '#FFF8E1',
-    borderColor: '#FFB74D',
-    shadowColor: '#FF9800',
-    shadowOpacity: 0.25,
-  },
-  levelLeft: {
+  levelCardContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
   },
   levelEmoji: {
-    fontSize: 32,
-    marginRight: 14,
+    fontSize: 40,
+    marginRight: 16,
   },
-  levelTextContainer: {
+  levelTextContent: {
     flex: 1,
   },
-  levelHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  levelCode: {
-    fontSize: 18,
+  levelTitle: {
+    fontSize: 20,
     fontWeight: '800',
-    color: '#5B8FB9',
-    marginRight: 10,
-    backgroundColor: '#E3F2FD',
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    borderRadius: 8,
   },
-  levelCodeSelected: {
-    color: '#E65100',
-    backgroundColor: '#FFE0B2',
-  },
-  levelName: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#3D5A80',
-  },
-  levelNameSelected: {
-    color: '#E65100',
+  levelSubtitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    marginTop: 2,
   },
   levelDescription: {
     fontSize: 13,
-    color: '#78909C',
-    fontWeight: '500',
+    color: '#90A4AE',
+    marginTop: 4,
   },
-  levelDescriptionSelected: {
-    color: '#FF9800',
+  levelCheckBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  checkEmojiLevel: {
-    fontSize: 20,
-    color: '#FF9800',
+  levelCheckMark: {
+    color: '#FFFFFF',
+    fontSize: 16,
     fontWeight: '800',
-    marginLeft: 10,
   },
-  continueButtonWrapper: {
-    position: 'absolute',
-    bottom: 30,
-    left: 24,
-    right: 24,
-    zIndex: 20,
+
+  // Bottom / Continue
+  bottomContainer: {
+    paddingHorizontal: 24,
+    paddingBottom: 30,
+    paddingTop: 16,
   },
   continueButton: {
-    backgroundColor: '#7DDBA3',
-    borderRadius: 28,
-    paddingVertical: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    paddingVertical: 18,
     alignItems: 'center',
-    shadowColor: '#38A169',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  continueButtonDisabled: {
+    backgroundColor: 'rgba(255,255,255,0.4)',
+    shadowOpacity: 0,
+    elevation: 0,
   },
   continueButtonText: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#667eea',
   },
 });
 
