@@ -20,6 +20,7 @@ const { width } = Dimensions.get('window');
 
 type NewHomeScreenProps = {
   onNavigateToChat: (word: ContentItem) => void;
+  onNavigateToJourney: () => void;
   nativeLanguage: LanguageCode;
   targetLanguage: LanguageCode;
   proficiencyLevel: ProficiencyLevel;
@@ -64,7 +65,7 @@ const Cloud: React.FC<{ delay: number; top: number; size: number; duration: numb
   );
 };
 
-const NewHomeScreen: React.FC<NewHomeScreenProps> = ({ onNavigateToChat, nativeLanguage, targetLanguage, proficiencyLevel }) => {
+const NewHomeScreen: React.FC<NewHomeScreenProps> = ({ onNavigateToChat, onNavigateToJourney, nativeLanguage, targetLanguage, proficiencyLevel }) => {
   const [word, setWord] = useState<ContentItem | null>(null);
   const [progress, setProgress] = useState<UserProgress | null>(null);
   const [showMeaning, setShowMeaning] = useState(false);
@@ -328,8 +329,14 @@ const NewHomeScreen: React.FC<NewHomeScreenProps> = ({ onNavigateToChat, nativeL
             <View style={styles.targetLanguageBadge}>
               <Text style={styles.targetLanguageFlag}>{targetLanguageFlag}</Text>
             </View>
-            {/* Streak Counter */}
-            {progress && progress.streak > 0 && (
+            {/* Streak Counter - Tappable to Journey */}
+            <TouchableOpacity 
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                onNavigateToJourney();
+              }}
+              activeOpacity={0.8}
+            >
               <Animated.View style={[styles.streakBubble, { transform: [{ scale: streakPulse }] }]}>
                 <Animated.Text 
                   style={[
@@ -342,11 +349,13 @@ const NewHomeScreen: React.FC<NewHomeScreenProps> = ({ onNavigateToChat, nativeL
                     }
                   ]}
                 >
-                  🔥
+                  {progress && progress.streak > 0 ? '🔥' : '🗺️'}
                 </Animated.Text>
-                <Text style={styles.streakText}>{progress.streak} {t('dayStreak')}</Text>
+                <Text style={styles.streakText}>
+                  {progress && progress.streak > 0 ? `${progress.streak} ${t('dayStreak')}` : 'Start'}
+                </Text>
               </Animated.View>
-            )}
+            </TouchableOpacity>
           </View>
         </View>
 

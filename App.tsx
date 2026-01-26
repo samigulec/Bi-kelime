@@ -5,13 +5,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import HomeScreen from './src/screens/HomeScreen';
 import ChatScreen from './src/screens/ChatScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
-import { ContentItem, ProficiencyLevel } from './src/types';
+import JourneyScreen from './src/screens/JourneyScreen';
+import { ContentItem, ProficiencyLevel, UserProgress } from './src/types';
 import { LanguageCode } from './src/utils/translations';
-import { getLanguagePreferences, saveLanguagePreferences } from './src/utils/storage';
+import { getLanguagePreferences, saveLanguagePreferences, getUserProgress } from './src/utils/storage';
 
 LogBox.ignoreLogs(['Non-serializable values']);
 
-type Screen = 'Loading' | 'Onboarding' | 'Home' | 'Chat';
+type Screen = 'Loading' | 'Onboarding' | 'Home' | 'Chat' | 'Journey';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('Loading');
@@ -19,10 +20,17 @@ export default function App() {
   const [nativeLanguage, setNativeLanguage] = useState<LanguageCode>('en');
   const [targetLanguage, setTargetLanguage] = useState<LanguageCode>('es');
   const [proficiencyLevel, setProficiencyLevel] = useState<ProficiencyLevel>('A1');
+  const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
 
   useEffect(() => {
     checkLanguagePreferences();
+    loadUserProgress();
   }, []);
+
+  const loadUserProgress = async () => {
+    const progress = await getUserProgress();
+    setUserProgress(progress);
+  };
 
   const checkLanguagePreferences = async () => {
     const savedPreferences = await getLanguagePreferences();
@@ -56,6 +64,11 @@ export default function App() {
   const navigateToHome = () => {
     setCurrentScreen('Home');
     setSelectedWord(null);
+    loadUserProgress(); // Refresh progress when returning home
+  };
+
+  const navigateToJourney = () => {
+    setCurrentScreen('Journey');
   };
 
   // Loading screen
@@ -76,10 +89,18 @@ export default function App() {
       )}
       {currentScreen === 'Home' && (
         <HomeScreen 
-          onNavigateToChat={navigateToChat} 
+          onNavigateToChat={navigateToChat}
+          onNavigateToJourney={navigateToJourney}
           nativeLanguage={nativeLanguage}
           targetLanguage={targetLanguage}
           proficiencyLevel={proficiencyLevel}
+        />
+      )}
+      {currentScreen === 'Journey' && (
+        <JourneyScreen
+          currentStreak={userProgress?.streak || 0}
+          totalWordsLearned={userProgress?.totalIdiomsLearned || 0}
+          onClose={navigateToHome}
         />
       )}
       {currentScreen === 'Chat' && selectedWord && (
