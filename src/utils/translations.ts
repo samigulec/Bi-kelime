@@ -46,7 +46,7 @@ type TranslationKey =
 
 const translations: Record<LanguageCode, Record<TranslationKey, string>> = {
   en: {
-    appName: "Bi'Kelime",
+    appName: "One Word",
     idiomOfTheDay: '🎯 Idiom of the Day',
     showMeaning: 'Show Meaning',
     hideMeaning: 'Hide',
@@ -68,7 +68,7 @@ const translations: Record<LanguageCode, Record<TranslationKey, string>> = {
     errorMessage: 'An error occurred. Please try again! 😅',
   },
   tr: {
-    appName: "Bi'Kelime",
+    appName: "One Word",
     idiomOfTheDay: '🎯 Günün Deyimi',
     showMeaning: 'Anlamını Göster',
     hideMeaning: 'Gizle',
@@ -90,7 +90,7 @@ const translations: Record<LanguageCode, Record<TranslationKey, string>> = {
     errorMessage: 'Bir hata oluştu. Lütfen tekrar dene! 😅',
   },
   es: {
-    appName: "Bi'Kelime",
+    appName: "One Word",
     idiomOfTheDay: '🎯 Modismo del Día',
     showMeaning: 'Mostrar Significado',
     hideMeaning: 'Ocultar',
@@ -112,7 +112,7 @@ const translations: Record<LanguageCode, Record<TranslationKey, string>> = {
     errorMessage: 'Ocurrió un error. ¡Inténtalo de nuevo! 😅',
   },
   de: {
-    appName: "Bi'Kelime",
+    appName: "One Word",
     idiomOfTheDay: '🎯 Redewendung des Tages',
     showMeaning: 'Bedeutung zeigen',
     hideMeaning: 'Verstecken',
@@ -134,7 +134,7 @@ const translations: Record<LanguageCode, Record<TranslationKey, string>> = {
     errorMessage: 'Ein Fehler ist aufgetreten. Bitte versuche es erneut! 😅',
   },
   fr: {
-    appName: "Bi'Kelime",
+    appName: "One Word",
     idiomOfTheDay: "🎯 Expression du Jour",
     showMeaning: 'Afficher le Sens',
     hideMeaning: 'Cacher',
@@ -156,7 +156,7 @@ const translations: Record<LanguageCode, Record<TranslationKey, string>> = {
     errorMessage: "Une erreur s'est produite. Réessaie! 😅",
   },
   pt: {
-    appName: "Bi'Kelime",
+    appName: "One Word",
     idiomOfTheDay: '🎯 Expressão do Dia',
     showMeaning: 'Mostrar Significado',
     hideMeaning: 'Esconder',
@@ -178,7 +178,7 @@ const translations: Record<LanguageCode, Record<TranslationKey, string>> = {
     errorMessage: 'Ocorreu um erro. Tente novamente! 😅',
   },
   it: {
-    appName: "Bi'Kelime",
+    appName: "One Word",
     idiomOfTheDay: '🎯 Modi di Dire del Giorno',
     showMeaning: 'Mostra Significato',
     hideMeaning: 'Nascondi',
@@ -200,7 +200,7 @@ const translations: Record<LanguageCode, Record<TranslationKey, string>> = {
     errorMessage: 'Si è verificato un errore. Riprova! 😅',
   },
   ru: {
-    appName: "Bi'Kelime",
+    appName: "One Word",
     idiomOfTheDay: '🎯 Идиома Дня',
     showMeaning: 'Показать Значение',
     hideMeaning: 'Скрыть',
@@ -222,7 +222,7 @@ const translations: Record<LanguageCode, Record<TranslationKey, string>> = {
     errorMessage: 'Произошла ошибка. Попробуй снова! 😅',
   },
   ja: {
-    appName: "Bi'Kelime",
+    appName: "One Word",
     idiomOfTheDay: '🎯 今日のイディオム',
     showMeaning: '意味を表示',
     hideMeaning: '隠す',
@@ -244,7 +244,7 @@ const translations: Record<LanguageCode, Record<TranslationKey, string>> = {
     errorMessage: 'エラーが発生しました。もう一度試してください！ 😅',
   },
   ko: {
-    appName: "Bi'Kelime",
+    appName: "One Word",
     idiomOfTheDay: '🎯 오늘의 관용구',
     showMeaning: '의미 보기',
     hideMeaning: '숨기기',
@@ -266,7 +266,7 @@ const translations: Record<LanguageCode, Record<TranslationKey, string>> = {
     errorMessage: '오류가 발생했습니다. 다시 시도해 주세요! 😅',
   },
   zh: {
-    appName: "Bi'Kelime",
+    appName: "One Word",
     idiomOfTheDay: '🎯 每日习语',
     showMeaning: '显示含义',
     hideMeaning: '隐藏',

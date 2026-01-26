@@ -1,12 +1,11 @@
 {
   "expo": {
-    "name": "Bi'Kelime",
-    "slug": "bikelime",
+    "name": "One Word",
+    "slug": "oneword",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
