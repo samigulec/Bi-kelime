@@ -339,9 +339,10 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
           </View>
         )}
 
-        {/* Content */}
+        {/* Content - Using key prop to force fresh render when step changes */}
         {step < 3 ? (
           <FlatList
+            key={`language-list-step-${step}`}
             data={availableLanguages}
             renderItem={renderLanguageItem}
             keyExtractor={(item) => item.code}
@@ -352,6 +353,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
           />
         ) : (
           <FlatList
+            key="level-list"
             data={LEVELS}
             renderItem={renderLevelItem}
             keyExtractor={(item) => item.code}
