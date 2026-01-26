@@ -67,3 +67,4 @@ export const getExampleTranslation = (
   return word.example_translation[nativeLanguage] || word.example_translation['en'] || '';
 };
 
+

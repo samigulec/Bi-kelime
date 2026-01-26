@@ -182,25 +182,31 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
     outputRange: ['-1deg', '1deg', '-1deg'],
   });
 
-  const getTitle = () => {
-    if (step === 1) {
-      return 'I speak...';
+  // Multi-language titles for truly global experience
+  const titles: Record<string, { step1: string; step2: string }> = {
+    main: { 
+      step1: 'I speak...', 
+      step2: 'I want to learn...' 
+    },
+    secondary: {
+      step1: '¿Qué idioma hablas? • Welche Sprache sprichst du?',
+      step2: '¿Qué idioma quieres aprender? • Welche Sprache möchtest du lernen?'
     }
-    return 'I want to learn...';
+  };
+
+  const getTitle = () => {
+    return step === 1 ? titles.main.step1 : titles.main.step2;
   };
 
   const getSubtitle = () => {
-    if (step === 1) {
-      return 'Hangi dili konuşuyorsun?';
-    }
-    return 'Hangi dili öğrenmek istiyorsun?';
+    return step === 1 ? titles.secondary.step1 : titles.secondary.step2;
   };
 
   const getContinueText = () => {
     if (step === 1) {
-      return 'Continue';
+      return 'Continue →';
     }
-    return "Let's Start!";
+    return "Let's Go! 🚀";
   };
 
   const selectedLanguage = step === 1 ? nativeLanguage : targetLanguage;
@@ -245,10 +251,12 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
           </View>
         </View>
 
-        {/* Validation Error */}
-        {step === 2 && targetLanguage === nativeLanguage && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>⚠️ Please select a different language to learn!</Text>
+        {/* Validation Error - shown when trying to select same language */}
+        {step === 2 && (
+          <View style={styles.infoContainer}>
+            <Text style={styles.infoText}>
+              🎯 Select a language different from your native language
+            </Text>
           </View>
         )}
 
@@ -356,25 +364,27 @@ const styles = StyleSheet.create({
     lineHeight: 36,
   },
   titleAlt: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 13,
+    fontWeight: '500',
     color: '#7EC8E3',
     textAlign: 'center',
     marginTop: 8,
+    paddingHorizontal: 20,
+    lineHeight: 20,
   },
-  errorContainer: {
+  infoContainer: {
     marginHorizontal: 24,
     marginBottom: 12,
     padding: 12,
-    backgroundColor: '#FFE5EC',
+    backgroundColor: '#E8F5E9',
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#FF8FAB',
+    borderColor: '#81C784',
   },
-  errorText: {
+  infoText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#E75480',
+    color: '#2E7D32',
     textAlign: 'center',
   },
   languageGrid: {
@@ -451,4 +461,5 @@ const styles = StyleSheet.create({
 });
 
 export default OnboardingScreen;
+
 
