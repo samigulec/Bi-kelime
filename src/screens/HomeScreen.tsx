@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
-import { ContentItem, UserProgress } from '../types';
+import { ContentItem, UserProgress, ProficiencyLevel } from '../types';
 import { getWordOfTheDay, getTranslation, getExampleTranslation } from '../utils/contentLoader';
 import { updateDailyStreak } from '../utils/storage';
 import { getTranslation as getUITranslation, LanguageCode, LANGUAGES } from '../utils/translations';
@@ -22,6 +22,7 @@ type NewHomeScreenProps = {
   onNavigateToChat: (word: ContentItem) => void;
   nativeLanguage: LanguageCode;
   targetLanguage: LanguageCode;
+  proficiencyLevel: ProficiencyLevel;
 };
 
 // Animated Cloud Component
@@ -63,7 +64,7 @@ const Cloud: React.FC<{ delay: number; top: number; size: number; duration: numb
   );
 };
 
-const NewHomeScreen: React.FC<NewHomeScreenProps> = ({ onNavigateToChat, nativeLanguage, targetLanguage }) => {
+const NewHomeScreen: React.FC<NewHomeScreenProps> = ({ onNavigateToChat, nativeLanguage, targetLanguage, proficiencyLevel }) => {
   const [word, setWord] = useState<ContentItem | null>(null);
   const [progress, setProgress] = useState<UserProgress | null>(null);
   const [showMeaning, setShowMeaning] = useState(false);
@@ -89,7 +90,7 @@ const NewHomeScreen: React.FC<NewHomeScreenProps> = ({ onNavigateToChat, nativeL
   useEffect(() => {
     loadDailyContent();
     startAnimations();
-  }, [targetLanguage]);
+  }, [targetLanguage, proficiencyLevel]);
 
   const startAnimations = () => {
     // Card floating
@@ -223,7 +224,7 @@ const NewHomeScreen: React.FC<NewHomeScreenProps> = ({ onNavigateToChat, nativeL
 
   const loadDailyContent = async () => {
     try {
-      const todaysWord = getWordOfTheDay(targetLanguage);
+      const todaysWord = getWordOfTheDay(targetLanguage, proficiencyLevel);
       setWord(todaysWord);
       setShowMeaning(false);
       // Update streak with word ID hash

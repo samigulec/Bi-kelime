@@ -20,13 +20,7 @@
       "en": "Hello! How are you?",
       "tr": "Merhaba! Nasılsın?",
       "de": "Hallo! Wie geht es dir?",
-      "fr": "Bonjour! Comment vas-tu?",
-      "pt": "Olá! Como você está?",
-      "it": "Ciao! Come stai?",
-      "ru": "Привет! Как дела?",
-      "ja": "こんにちは！元気ですか？",
-      "ko": "안녕하세요! 어떻게 지내세요?",
-      "zh": "你好！你好吗？"
+      "fr": "Bonjour! Comment vas-tu?"
     },
     "pronunciation": "OH-lah"
   },
@@ -35,29 +29,16 @@
     "target_word": "Gracias",
     "level": "A1",
     "translations": {
-      "en": "Thank you / Thanks",
+      "en": "Thank you",
       "tr": "Teşekkür ederim",
       "de": "Danke",
-      "fr": "Merci",
-      "pt": "Obrigado",
-      "it": "Grazie",
-      "ru": "Спасибо",
-      "ja": "ありがとう",
-      "ko": "감사합니다",
-      "zh": "谢谢"
+      "fr": "Merci"
     },
     "example_sentence": "Gracias por tu ayuda.",
     "example_translation": {
       "en": "Thanks for your help.",
       "tr": "Yardımın için teşekkürler.",
-      "de": "Danke für deine Hilfe.",
-      "fr": "Merci pour ton aide.",
-      "pt": "Obrigado pela sua ajuda.",
-      "it": "Grazie per il tuo aiuto.",
-      "ru": "Спасибо за твою помощь.",
-      "ja": "手伝ってくれてありがとう。",
-      "ko": "도와줘서 고마워요.",
-      "zh": "谢谢你的帮助。"
+      "de": "Danke für deine Hilfe."
     },
     "pronunciation": "GRAH-see-ahs"
   },
@@ -66,29 +47,15 @@
     "target_word": "Amigo",
     "level": "A1",
     "translations": {
-      "en": "Friend (male)",
-      "tr": "Arkadaş (erkek)",
+      "en": "Friend",
+      "tr": "Arkadaş",
       "de": "Freund",
-      "fr": "Ami",
-      "pt": "Amigo",
-      "it": "Amico",
-      "ru": "Друг",
-      "ja": "友達（男性）",
-      "ko": "친구 (남성)",
-      "zh": "朋友（男性）"
+      "fr": "Ami"
     },
     "example_sentence": "Mi amigo es muy simpático.",
     "example_translation": {
       "en": "My friend is very nice.",
-      "tr": "Arkadaşım çok sempatik.",
-      "de": "Mein Freund ist sehr nett.",
-      "fr": "Mon ami est très sympa.",
-      "pt": "Meu amigo é muito simpático.",
-      "it": "Il mio amico è molto simpatico.",
-      "ru": "Мой друг очень приятный.",
-      "ja": "私の友達はとても親切です。",
-      "ko": "내 친구는 매우 친절해요.",
-      "zh": "我的朋友很友好。"
+      "tr": "Arkadaşım çok sempatik."
     },
     "pronunciation": "ah-MEE-goh"
   },
@@ -100,26 +67,12 @@
       "en": "House / Home",
       "tr": "Ev",
       "de": "Haus",
-      "fr": "Maison",
-      "pt": "Casa",
-      "it": "Casa",
-      "ru": "Дом",
-      "ja": "家",
-      "ko": "집",
-      "zh": "房子"
+      "fr": "Maison"
     },
     "example_sentence": "Esta es mi casa.",
     "example_translation": {
       "en": "This is my house.",
-      "tr": "Bu benim evim.",
-      "de": "Das ist mein Haus.",
-      "fr": "C'est ma maison.",
-      "pt": "Esta é a minha casa.",
-      "it": "Questa è la mia casa.",
-      "ru": "Это мой дом.",
-      "ja": "これは私の家です。",
-      "ko": "이것은 내 집이에요.",
-      "zh": "这是我的房子。"
+      "tr": "Bu benim evim."
     },
     "pronunciation": "KAH-sah"
   },
@@ -131,91 +84,285 @@
       "en": "Water",
       "tr": "Su",
       "de": "Wasser",
-      "fr": "Eau",
-      "pt": "Água",
-      "it": "Acqua",
-      "ru": "Вода",
-      "ja": "水",
-      "ko": "물",
-      "zh": "水"
+      "fr": "Eau"
     },
     "example_sentence": "Necesito agua, por favor.",
     "example_translation": {
       "en": "I need water, please.",
-      "tr": "Lütfen suya ihtiyacım var.",
-      "de": "Ich brauche Wasser, bitte.",
-      "fr": "J'ai besoin d'eau, s'il te plaît.",
-      "pt": "Preciso de água, por favor.",
-      "it": "Ho bisogno di acqua, per favore.",
-      "ru": "Мне нужна вода, пожалуйста.",
-      "ja": "水が必要です、お願いします。",
-      "ko": "물이 필요해요, 부탁해요.",
-      "zh": "我需要水，请。"
+      "tr": "Lütfen suya ihtiyacım var."
     },
     "pronunciation": "AH-gwah"
   },
   {
     "id": "es_6",
-    "target_word": "Comida",
+    "target_word": "Buenos días",
     "level": "A1",
     "translations": {
-      "en": "Food",
-      "tr": "Yemek",
-      "de": "Essen",
-      "fr": "Nourriture",
-      "pt": "Comida",
-      "it": "Cibo",
-      "ru": "Еда",
-      "ja": "食べ物",
-      "ko": "음식",
-      "zh": "食物"
+      "en": "Good morning",
+      "tr": "Günaydın",
+      "de": "Guten Morgen",
+      "fr": "Bonjour"
     },
-    "example_sentence": "La comida está deliciosa.",
+    "example_sentence": "¡Buenos días! ¿Dormiste bien?",
     "example_translation": {
-      "en": "The food is delicious.",
-      "tr": "Yemek çok lezzetli.",
-      "de": "Das Essen ist lecker.",
-      "fr": "La nourriture est délicieuse.",
-      "pt": "A comida está deliciosa.",
-      "it": "Il cibo è delizioso.",
-      "ru": "Еда вкусная.",
-      "ja": "食べ物は美味しいです。",
-      "ko": "음식이 맛있어요.",
-      "zh": "食物很美味。"
+      "en": "Good morning! Did you sleep well?",
+      "tr": "Günaydın! İyi uyudun mu?"
     },
-    "pronunciation": "koh-MEE-dah"
+    "pronunciation": "BWEH-nohs DEE-ahs"
   },
   {
     "id": "es_7",
-    "target_word": "Amor",
+    "target_word": "Por favor",
     "level": "A1",
     "translations": {
-      "en": "Love",
-      "tr": "Aşk / Sevgi",
-      "de": "Liebe",
-      "fr": "Amour",
-      "pt": "Amor",
-      "it": "Amore",
-      "ru": "Любовь",
-      "ja": "愛",
-      "ko": "사랑",
-      "zh": "爱"
+      "en": "Please",
+      "tr": "Lütfen",
+      "de": "Bitte",
+      "fr": "S'il vous plaît"
     },
-    "example_sentence": "Te quiero con todo mi amor.",
+    "example_sentence": "¿Puede ayudarme, por favor?",
     "example_translation": {
-      "en": "I love you with all my heart.",
-      "tr": "Seni tüm kalbimle seviyorum.",
-      "de": "Ich liebe dich von ganzem Herzen.",
-      "fr": "Je t'aime de tout mon cœur.",
-      "pt": "Eu te amo com todo o meu coração.",
-      "it": "Ti amo con tutto il mio cuore.",
-      "ru": "Я люблю тебя всем сердцем.",
-      "ja": "心からあなたを愛しています。",
-      "ko": "온 마음을 다해 사랑해요.",
-      "zh": "我全心全意地爱你。"
+      "en": "Can you help me, please?",
+      "tr": "Bana yardım edebilir misiniz, lütfen?"
     },
-    "pronunciation": "ah-MOHR"
+    "pronunciation": "pohr fah-VOHR"
+  },
+  {
+    "id": "es_8",
+    "target_word": "Entender",
+    "level": "A2",
+    "translations": {
+      "en": "To understand",
+      "tr": "Anlamak",
+      "de": "Verstehen",
+      "fr": "Comprendre"
+    },
+    "example_sentence": "No entiendo lo que dices.",
+    "example_translation": {
+      "en": "I don't understand what you're saying.",
+      "tr": "Ne dediğini anlamıyorum."
+    },
+    "pronunciation": "ehn-tehn-DEHR"
+  },
+  {
+    "id": "es_9",
+    "target_word": "Trabajo",
+    "level": "A2",
+    "translations": {
+      "en": "Work / Job",
+      "tr": "İş",
+      "de": "Arbeit",
+      "fr": "Travail"
+    },
+    "example_sentence": "Tengo mucho trabajo hoy.",
+    "example_translation": {
+      "en": "I have a lot of work today.",
+      "tr": "Bugün çok işim var."
+    },
+    "pronunciation": "trah-BAH-hoh"
+  },
+  {
+    "id": "es_10",
+    "target_word": "Siempre",
+    "level": "A2",
+    "translations": {
+      "en": "Always",
+      "tr": "Her zaman",
+      "de": "Immer",
+      "fr": "Toujours"
+    },
+    "example_sentence": "Siempre llego a tiempo.",
+    "example_translation": {
+      "en": "I always arrive on time.",
+      "tr": "Her zaman zamanında gelirim."
+    },
+    "pronunciation": "SYEHM-preh"
+  },
+  {
+    "id": "es_11",
+    "target_word": "Bastante",
+    "level": "A2",
+    "translations": {
+      "en": "Quite / Enough",
+      "tr": "Oldukça / Yeterince",
+      "de": "Ziemlich / Genug",
+      "fr": "Assez"
+    },
+    "example_sentence": "Hace bastante frío hoy.",
+    "example_translation": {
+      "en": "It's quite cold today.",
+      "tr": "Bugün oldukça soğuk."
+    },
+    "pronunciation": "bahs-TAHN-teh"
+  },
+  {
+    "id": "es_12",
+    "target_word": "Desarrollar",
+    "level": "B1",
+    "translations": {
+      "en": "To develop",
+      "tr": "Geliştirmek",
+      "de": "Entwickeln",
+      "fr": "Développer"
+    },
+    "example_sentence": "Queremos desarrollar nuevas habilidades.",
+    "example_translation": {
+      "en": "We want to develop new skills.",
+      "tr": "Yeni beceriler geliştirmek istiyoruz."
+    },
+    "pronunciation": "deh-sah-roh-YAHR"
+  },
+  {
+    "id": "es_13",
+    "target_word": "Sin embargo",
+    "level": "B1",
+    "translations": {
+      "en": "However / Nevertheless",
+      "tr": "Ancak / Bununla birlikte",
+      "de": "Jedoch / Dennoch",
+      "fr": "Cependant"
+    },
+    "example_sentence": "Es difícil, sin embargo, no es imposible.",
+    "example_translation": {
+      "en": "It's difficult, however, it's not impossible.",
+      "tr": "Zor, ancak imkansız değil."
+    },
+    "pronunciation": "seen ehm-BAHR-goh"
+  },
+  {
+    "id": "es_14",
+    "target_word": "Aprovechar",
+    "level": "B1",
+    "translations": {
+      "en": "To take advantage of",
+      "tr": "Faydalanmak",
+      "de": "Nutzen",
+      "fr": "Profiter de"
+    },
+    "example_sentence": "Debes aprovechar esta oportunidad.",
+    "example_translation": {
+      "en": "You should take advantage of this opportunity.",
+      "tr": "Bu fırsattan faydalanmalısın."
+    },
+    "pronunciation": "ah-proh-veh-CHAHR"
+  },
+  {
+    "id": "es_15",
+    "target_word": "A pesar de",
+    "level": "B2",
+    "translations": {
+      "en": "Despite / In spite of",
+      "tr": "Rağmen",
+      "de": "Trotz",
+      "fr": "Malgré"
+    },
+    "example_sentence": "A pesar de la lluvia, salimos a caminar.",
+    "example_translation": {
+      "en": "Despite the rain, we went for a walk.",
+      "tr": "Yağmura rağmen yürüyüşe çıktık."
+    },
+    "pronunciation": "ah peh-SAHR deh"
+  },
+  {
+    "id": "es_16",
+    "target_word": "Imprescindible",
+    "level": "B2",
+    "translations": {
+      "en": "Essential / Indispensable",
+      "tr": "Vazgeçilmez",
+      "de": "Unentbehrlich",
+      "fr": "Indispensable"
+    },
+    "example_sentence": "El inglés es imprescindible para este trabajo.",
+    "example_translation": {
+      "en": "English is essential for this job.",
+      "tr": "Bu iş için İngilizce vazgeçilmez."
+    },
+    "pronunciation": "eem-prehs-seen-DEE-bleh"
+  },
+  {
+    "id": "es_17",
+    "target_word": "Conllevar",
+    "level": "B2",
+    "translations": {
+      "en": "To entail / To involve",
+      "tr": "Gerektirmek",
+      "de": "Mit sich bringen",
+      "fr": "Impliquer"
+    },
+    "example_sentence": "Este puesto conlleva mucha responsabilidad.",
+    "example_translation": {
+      "en": "This position entails a lot of responsibility.",
+      "tr": "Bu pozisyon çok sorumluluk gerektiriyor."
+    },
+    "pronunciation": "kohn-yeh-VAHR"
+  },
+  {
+    "id": "es_18",
+    "target_word": "Desempeñar",
+    "level": "C1",
+    "translations": {
+      "en": "To perform / To carry out (a role)",
+      "tr": "Yerine getirmek (rol)",
+      "de": "Ausüben",
+      "fr": "Exercer / Remplir"
+    },
+    "example_sentence": "Ella desempeña un papel crucial en la empresa.",
+    "example_translation": {
+      "en": "She performs a crucial role in the company.",
+      "tr": "O, şirkette kritik bir rol üstleniyor."
+    },
+    "pronunciation": "deh-sehm-peh-NYAHR"
+  },
+  {
+    "id": "es_19",
+    "target_word": "No obstante",
+    "level": "C1",
+    "translations": {
+      "en": "Nevertheless / Notwithstanding",
+      "tr": "Buna rağmen",
+      "de": "Nichtsdestoweniger",
+      "fr": "Néanmoins"
+    },
+    "example_sentence": "El proyecto es ambicioso; no obstante, es factible.",
+    "example_translation": {
+      "en": "The project is ambitious; nevertheless, it's feasible.",
+      "tr": "Proje iddialı; buna rağmen uygulanabilir."
+    },
+    "pronunciation": "noh ohbs-TAHN-teh"
+  },
+  {
+    "id": "es_20",
+    "target_word": "Subyacer",
+    "level": "C2",
+    "translations": {
+      "en": "To underlie",
+      "tr": "Altında yatmak",
+      "de": "Zugrunde liegen",
+      "fr": "Sous-tendre"
+    },
+    "example_sentence": "Las tensiones que subyacen al conflicto son complejas.",
+    "example_translation": {
+      "en": "The tensions that underlie the conflict are complex.",
+      "tr": "Çatışmanın altında yatan gerilimler karmaşık."
+    },
+    "pronunciation": "soob-yah-SEHR"
+  },
+  {
+    "id": "es_21",
+    "target_word": "Elucidar",
+    "level": "C2",
+    "translations": {
+      "en": "To elucidate / To clarify",
+      "tr": "Açıklamak / Aydınlatmak",
+      "de": "Erläutern",
+      "fr": "Élucider"
+    },
+    "example_sentence": "El autor intenta elucidar los misterios de la historia.",
+    "example_translation": {
+      "en": "The author attempts to elucidate the mysteries of history.",
+      "tr": "Yazar, tarihin gizemlerini açıklamaya çalışıyor."
+    },
+    "pronunciation": "eh-loo-see-DAHR"
   }
 ]
-
-

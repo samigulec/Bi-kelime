@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import HomeScreen from './src/screens/HomeScreen';
 import ChatScreen from './src/screens/ChatScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
-import { ContentItem } from './src/types';
+import { ContentItem, ProficiencyLevel } from './src/types';
 import { LanguageCode } from './src/utils/translations';
 import { getLanguagePreferences, saveLanguagePreferences } from './src/utils/storage';
 
@@ -18,6 +18,7 @@ export default function App() {
   const [selectedWord, setSelectedWord] = useState<ContentItem | null>(null);
   const [nativeLanguage, setNativeLanguage] = useState<LanguageCode>('en');
   const [targetLanguage, setTargetLanguage] = useState<LanguageCode>('es');
+  const [proficiencyLevel, setProficiencyLevel] = useState<ProficiencyLevel>('A1');
 
   useEffect(() => {
     checkLanguagePreferences();
@@ -25,22 +26,25 @@ export default function App() {
 
   const checkLanguagePreferences = async () => {
     const savedPreferences = await getLanguagePreferences();
-    if (savedPreferences) {
+    if (savedPreferences && savedPreferences.proficiencyLevel) {
       setNativeLanguage(savedPreferences.nativeLanguage as LanguageCode);
       setTargetLanguage(savedPreferences.targetLanguage as LanguageCode);
+      setProficiencyLevel(savedPreferences.proficiencyLevel as ProficiencyLevel);
       setCurrentScreen('Home');
     } else {
       setCurrentScreen('Onboarding');
     }
   };
 
-  const handleOnboardingComplete = async (native: LanguageCode, target: LanguageCode) => {
+  const handleOnboardingComplete = async (native: LanguageCode, target: LanguageCode, level: ProficiencyLevel) => {
     await saveLanguagePreferences({
       nativeLanguage: native,
       targetLanguage: target,
+      proficiencyLevel: level,
     });
     setNativeLanguage(native);
     setTargetLanguage(target);
+    setProficiencyLevel(level);
     setCurrentScreen('Home');
   };
 
@@ -75,6 +79,7 @@ export default function App() {
           onNavigateToChat={navigateToChat} 
           nativeLanguage={nativeLanguage}
           targetLanguage={targetLanguage}
+          proficiencyLevel={proficiencyLevel}
         />
       )}
       {currentScreen === 'Chat' && selectedWord && (

@@ -1,4 +1,4 @@
-import { ContentItem } from '../types';
+import { ContentItem, ProficiencyLevel } from '../types';
 
 // Import content files
 import esContent from '../data/content/es_content.json';
@@ -10,6 +10,21 @@ import enContent from '../data/content/en_content.json';
 const contentMap: Record<string, ContentItem[]> = {
   es: esContent as ContentItem[],
   en: enContent as ContentItem[],
+};
+
+/**
+ * Level hierarchy for filtering
+ * A1 users see only A1 content
+ * A2 users see A1 + A2 content
+ * B1 users see A1 + A2 + B1 content, etc.
+ */
+const levelHierarchy: Record<ProficiencyLevel, ProficiencyLevel[]> = {
+  'A1': ['A1'],
+  'A2': ['A1', 'A2'],
+  'B1': ['A1', 'A2', 'B1'],
+  'B2': ['A1', 'A2', 'B1', 'B2'],
+  'C1': ['A1', 'A2', 'B1', 'B2', 'C1'],
+  'C2': ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'],
 };
 
 /**
@@ -27,14 +42,31 @@ export const loadContentForLanguage = (targetLanguage: string): ContentItem[] =>
 };
 
 /**
- * Get the word/phrase of the day based on current date
- * All users see the same word on the same day
+ * Load content filtered by proficiency level
  */
-export const getWordOfTheDay = (targetLanguage: string): ContentItem => {
-  const content = loadContentForLanguage(targetLanguage);
+export const loadContentForLevel = (targetLanguage: string, level: ProficiencyLevel): ContentItem[] => {
+  const allContent = loadContentForLanguage(targetLanguage);
+  const allowedLevels = levelHierarchy[level] || ['A1'];
+  
+  return allContent.filter(item => allowedLevels.includes(item.level as ProficiencyLevel));
+};
+
+/**
+ * Get the word/phrase of the day based on current date and user level
+ * All users at the same level see the same word on the same day
+ */
+export const getWordOfTheDay = (targetLanguage: string, level: ProficiencyLevel = 'A1'): ContentItem => {
+  const content = loadContentForLevel(targetLanguage, level);
   
   if (content.length === 0) {
-    throw new Error('No content available');
+    // Fallback to all content if no level-specific content
+    const allContent = loadContentForLanguage(targetLanguage);
+    if (allContent.length === 0) {
+      throw new Error('No content available');
+    }
+    const today = new Date();
+    const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
+    return allContent[dayOfYear % allContent.length];
   }
   
   // Use date as seed for consistent daily selection

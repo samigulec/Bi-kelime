@@ -35,7 +35,10 @@ export interface UserProgress {
   totalIdiomsLearned: number;
 }
 
+export type ProficiencyLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+
 export interface LanguagePreferences {
   nativeLanguage: string; // User's native language (for UI and translations)
   targetLanguage: string; // Language the user wants to learn (for content)
+  proficiencyLevel: ProficiencyLevel; // User's current level
 }
