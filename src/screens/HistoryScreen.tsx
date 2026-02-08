@@ -1,0 +1,254 @@
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  SafeAreaView,
+  FlatList,
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Haptics from 'expo-haptics';
+import { LearnedWord } from '../types';
+import { getLearnedWords, toggleFavorite } from '../utils/storage';
+import { LanguageCode } from '../utils/translations';
+
+type HistoryScreenProps = {
+  nativeLanguage: LanguageCode;
+  onClose: () => void;
+};
+
+const HistoryScreen: React.FC<HistoryScreenProps> = ({ nativeLanguage, onClose }) => {
+  const [words, setWords] = useState<LearnedWord[]>([]);
+  const [filter, setFilter] = useState<'all' | 'favorites'>('all');
+
+  useEffect(() => {
+    loadWords();
+  }, []);
+
+  const loadWords = async () => {
+    const learned = await getLearnedWords();
+    setWords(learned.reverse()); // Most recent first
+  };
+
+  const handleToggleFavorite = async (wordId: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    await toggleFavorite(wordId);
+    await loadWords();
+  };
+
+  const filteredWords = filter === 'favorites' 
+    ? words.filter(w => w.isFavorite) 
+    : words;
+
+  const renderWord = ({ item }: { item: LearnedWord }) => {
+    const translation = item.word.translations[nativeLanguage] || item.word.translations['en'] || '';
+    
+    return (
+      <View style={styles.wordCard}>
+        <View style={styles.wordLeft}>
+          <Text style={styles.wordTarget}>{item.word.target_word}</Text>
+          <Text style={styles.wordTranslation}>{translation}</Text>
+          <View style={styles.wordMeta}>
+            <View style={[styles.levelBadge, { backgroundColor: getLevelColor(item.word.level) }]}>
+              <Text style={styles.levelText}>{item.word.level}</Text>
+            </View>
+            <Text style={styles.dateText}>{item.learnedDate}</Text>
+          </View>
+        </View>
+        <TouchableOpacity 
+          onPress={() => handleToggleFavorite(item.word.id)}
+          style={styles.favButton}
+        >
+          <Text style={styles.favEmoji}>{item.isFavorite ? '❤️' : '🤍'}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const getLevelColor = (level: string) => {
+    const colors: Record<string, string> = {
+      'A1': '#4CAF50', 'A2': '#8BC34A',
+      'B1': '#FF9800', 'B2': '#FF5722',
+      'C1': '#9C27B0', 'C2': '#673AB7',
+    };
+    return colors[level] || '#78909C';
+  };
+
+  return (
+    <LinearGradient colors={['#F5F7FA', '#E8ECF1']} style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+            <Text style={styles.closeIcon}>←</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>📖 Word History</Text>
+          <View style={styles.placeholder} />
+        </View>
+
+        {/* Filter Tabs */}
+        <View style={styles.filterRow}>
+          <TouchableOpacity
+            style={[styles.filterTab, filter === 'all' && styles.filterTabActive]}
+            onPress={() => setFilter('all')}
+          >
+            <Text style={[styles.filterText, filter === 'all' && styles.filterTextActive]}>
+              All ({words.length})
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.filterTab, filter === 'favorites' && styles.filterTabActive]}
+            onPress={() => setFilter('favorites')}
+          >
+            <Text style={[styles.filterText, filter === 'favorites' && styles.filterTextActive]}>
+              ❤️ Favorites ({words.filter(w => w.isFavorite).length})
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Word List */}
+        {filteredWords.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyEmoji}>{filter === 'favorites' ? '💭' : '📭'}</Text>
+            <Text style={styles.emptyText}>
+              {filter === 'favorites' 
+                ? 'No favorites yet!\nTap ❤️ to save words you love.'
+                : 'No words learned yet!\nOpen the app daily to learn new words.'}
+            </Text>
+          </View>
+        ) : (
+          <FlatList
+            data={filteredWords}
+            renderItem={renderWord}
+            keyExtractor={(item) => item.word.id}
+            contentContainerStyle={styles.listContainer}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
+      </SafeAreaView>
+    </LinearGradient>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  safeArea: { flex: 1 },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  closeButton: {
+    backgroundColor: '#FFFFFF',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  closeIcon: { fontSize: 22, color: '#3D5A80', fontWeight: '600' },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: '#3D5A80' },
+  placeholder: { width: 40 },
+  filterRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    marginBottom: 16,
+  },
+  filterTab: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: 'center',
+    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    marginHorizontal: 4,
+  },
+  filterTabActive: {
+    backgroundColor: '#667eea',
+  },
+  filterText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#78909C',
+  },
+  filterTextActive: {
+    color: '#FFFFFF',
+  },
+  listContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+  },
+  wordCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  wordLeft: { flex: 1 },
+  wordTarget: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#3D5A80',
+    marginBottom: 4,
+  },
+  wordTranslation: {
+    fontSize: 15,
+    color: '#78909C',
+    marginBottom: 8,
+  },
+  wordMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  levelBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    marginRight: 8,
+  },
+  levelText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
+  dateText: {
+    fontSize: 12,
+    color: '#B0BEC5',
+  },
+  favButton: {
+    padding: 8,
+  },
+  favEmoji: {
+    fontSize: 24,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 40,
+  },
+  emptyEmoji: { fontSize: 60, marginBottom: 16 },
+  emptyText: {
+    fontSize: 16,
+    color: '#90A4AE',
+    textAlign: 'center',
+    lineHeight: 24,
+  },
+});
+
+export default HistoryScreen;
+

@@ -11,9 +11,11 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
+// @ts-ignore
+import * as Speech from 'expo-speech';
 import { ContentItem, UserProgress, ProficiencyLevel } from '../types';
 import { getWordOfTheDay, getTranslation, getExampleTranslation } from '../utils/contentLoader';
-import { updateDailyStreak } from '../utils/storage';
+import { updateDailyStreak, toggleFavorite, isFavorite, addLearnedWord } from '../utils/storage';
 import { getTranslation as getUITranslation, LanguageCode, LANGUAGES } from '../utils/translations';
 
 const { width } = Dimensions.get('window');
@@ -21,6 +23,8 @@ const { width } = Dimensions.get('window');
 type NewHomeScreenProps = {
   onNavigateToChat: (word: ContentItem) => void;
   onNavigateToJourney: () => void;
+  onNavigateToSettings: () => void;
+  onNavigateToHistory: () => void;
   nativeLanguage: LanguageCode;
   targetLanguage: LanguageCode;
   proficiencyLevel: ProficiencyLevel;
@@ -65,10 +69,11 @@ const Cloud: React.FC<{ delay: number; top: number; size: number; duration: numb
   );
 };
 
-const NewHomeScreen: React.FC<NewHomeScreenProps> = ({ onNavigateToChat, onNavigateToJourney, nativeLanguage, targetLanguage, proficiencyLevel }) => {
+const NewHomeScreen: React.FC<NewHomeScreenProps> = ({ onNavigateToChat, onNavigateToJourney, onNavigateToSettings, onNavigateToHistory, nativeLanguage, targetLanguage, proficiencyLevel }) => {
   const [word, setWord] = useState<ContentItem | null>(null);
   const [progress, setProgress] = useState<UserProgress | null>(null);
   const [showMeaning, setShowMeaning] = useState(false);
+  const [isFav, setIsFav] = useState(false);
 
   // Get translations
   const t = (key: Parameters<typeof getUITranslation>[0]) => getUITranslation(key, nativeLanguage);
@@ -232,9 +237,36 @@ const NewHomeScreen: React.FC<NewHomeScreenProps> = ({ onNavigateToChat, onNavig
       const idHash = parseInt(todaysWord.id.replace(/\D/g, '')) || 1;
       const updatedProgress = await updateDailyStreak(idHash);
       setProgress(updatedProgress);
+      // Save as learned
+      await addLearnedWord(todaysWord);
+      // Check if favorite
+      const favStatus = await isFavorite(todaysWord.id);
+      setIsFav(favStatus);
     } catch (error) {
       console.error('Error loading content:', error);
     }
+  };
+
+  const handleSpeak = () => {
+    if (!word) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    // Map language codes to speech language codes
+    const speechLang: Record<string, string> = {
+      en: 'en-US', es: 'es-ES', de: 'de-DE', fr: 'fr-FR',
+      pt: 'pt-BR', it: 'it-IT', ru: 'ru-RU', ja: 'ja-JP',
+      ko: 'ko-KR', zh: 'zh-CN', tr: 'tr-TR',
+    };
+    Speech.speak(word.target_word, {
+      language: speechLang[targetLanguage] || 'en-US',
+      rate: 0.8,
+    });
+  };
+
+  const handleToggleFavorite = async () => {
+    if (!word) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    const newFav = await toggleFavorite(word.id);
+    setIsFav(newFav);
   };
 
   const handleMeaningPress = () => {
@@ -381,15 +413,16 @@ const NewHomeScreen: React.FC<NewHomeScreenProps> = ({ onNavigateToChat, onNavig
             {/* Target Word */}
             <Text style={styles.idiomText}>"{word.target_word}"</Text>
             
-            {/* Pronunciation */}
-            {word.pronunciation && (
-              <TouchableOpacity 
-                style={styles.pronunciationButton}
-                onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
-              >
-                <Text style={styles.pronunciationText}>🔊 {word.pronunciation}</Text>
+            {/* Speak & Favorite Row */}
+            <View style={styles.actionRow}>
+              <TouchableOpacity style={styles.speakButton} onPress={handleSpeak}>
+                <Text style={styles.speakEmoji}>🔊</Text>
+                <Text style={styles.speakText}>{word.pronunciation || 'Listen'}</Text>
               </TouchableOpacity>
-            )}
+              <TouchableOpacity style={styles.favButtonCard} onPress={handleToggleFavorite}>
+                <Text style={styles.favEmoji}>{isFav ? '❤️' : '🤍'}</Text>
+              </TouchableOpacity>
+            </View>
 
             {/* Meaning Button with Sparkles */}
             <View style={styles.meaningButtonWrapper}>
@@ -460,7 +493,25 @@ const NewHomeScreen: React.FC<NewHomeScreenProps> = ({ onNavigateToChat, onNavig
           </TouchableOpacity>
         </Animated.View>
         
-        <Text style={styles.hintText}>{t('practiceHint')}</Text>
+        {/* Bottom Tab Bar */}
+        <View style={styles.bottomBar}>
+          <TouchableOpacity style={styles.tabItem} onPress={() => {}}>
+            <Text style={styles.tabEmoji}>🏠</Text>
+            <Text style={[styles.tabLabel, styles.tabLabelActive]}>Home</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.tabItem} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); onNavigateToHistory(); }}>
+            <Text style={styles.tabEmoji}>📖</Text>
+            <Text style={styles.tabLabel}>History</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.tabItem} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); onNavigateToJourney(); }}>
+            <Text style={styles.tabEmoji}>🗺️</Text>
+            <Text style={styles.tabLabel}>Journey</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.tabItem} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); onNavigateToSettings(); }}>
+            <Text style={styles.tabEmoji}>⚙️</Text>
+            <Text style={styles.tabLabel}>Settings</Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     </LinearGradient>
   );
@@ -606,17 +657,40 @@ const styles = StyleSheet.create({
     lineHeight: 42,
     marginBottom: 12,
   },
-  pronunciationButton: {
+  actionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  speakButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#F0F9FF',
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderRadius: 20,
-    marginBottom: 20,
+    flex: 1,
+    marginRight: 10,
   },
-  pronunciationText: {
-    fontSize: 15,
+  speakEmoji: {
+    fontSize: 18,
+    marginRight: 8,
+  },
+  speakText: {
+    fontSize: 14,
     color: '#5B8FB9',
     fontWeight: '600',
+  },
+  favButtonCard: {
+    backgroundColor: '#FFF0F5',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  favEmoji: {
+    fontSize: 22,
   },
 
   // Meaning Button
@@ -761,12 +835,37 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#FFFFFF',
   },
-  hintText: {
-    fontSize: 14,
-    color: '#5B8FB9',
-    textAlign: 'center',
-    paddingBottom: 24,
+  // Bottom Tab Bar
+  bottomBar: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 10,
+    paddingBottom: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 10,
+    zIndex: 20,
+  },
+  tabItem: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 4,
+  },
+  tabEmoji: {
+    fontSize: 22,
+    marginBottom: 4,
+  },
+  tabLabel: {
+    fontSize: 11,
     fontWeight: '600',
+    color: '#90A4AE',
+  },
+  tabLabelActive: {
+    color: '#667eea',
   },
 });
 

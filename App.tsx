@@ -6,13 +6,15 @@ import HomeScreen from './src/screens/HomeScreen';
 import ChatScreen from './src/screens/ChatScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
 import JourneyScreen from './src/screens/JourneyScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
+import HistoryScreen from './src/screens/HistoryScreen';
 import { ContentItem, ProficiencyLevel, UserProgress } from './src/types';
 import { LanguageCode } from './src/utils/translations';
-import { getLanguagePreferences, saveLanguagePreferences, getUserProgress } from './src/utils/storage';
+import { getLanguagePreferences, saveLanguagePreferences, getUserProgress, addLearnedWord } from './src/utils/storage';
 
 LogBox.ignoreLogs(['Non-serializable values']);
 
-type Screen = 'Loading' | 'Onboarding' | 'Home' | 'Chat' | 'Journey';
+type Screen = 'Loading' | 'Onboarding' | 'Home' | 'Chat' | 'Journey' | 'Settings' | 'History';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('Loading');
@@ -56,7 +58,9 @@ export default function App() {
     setCurrentScreen('Home');
   };
 
-  const navigateToChat = (word: ContentItem) => {
+  const navigateToChat = async (word: ContentItem) => {
+    // Save word as learned when user starts practicing
+    await addLearnedWord(word);
     setSelectedWord(word);
     setCurrentScreen('Chat');
   };
@@ -64,26 +68,41 @@ export default function App() {
   const navigateToHome = () => {
     setCurrentScreen('Home');
     setSelectedWord(null);
-    loadUserProgress(); // Refresh progress when returning home
+    loadUserProgress();
   };
 
   const navigateToJourney = () => {
+    loadUserProgress();
     setCurrentScreen('Journey');
+  };
+
+  const navigateToSettings = () => {
+    setCurrentScreen('Settings');
+  };
+
+  const navigateToHistory = () => {
+    setCurrentScreen('History');
+  };
+
+  const handleReset = () => {
+    setCurrentScreen('Onboarding');
   };
 
   // Loading screen
   if (currentScreen === 'Loading') {
     return (
-      <LinearGradient colors={['#E0F4FF', '#C5EBFF', '#B8E4FF']} style={styles.loadingContainer}>
-        <StatusBar style="dark" />
-        <ActivityIndicator size="large" color="#7EC8E3" />
+      <LinearGradient colors={['#667eea', '#764ba2']} style={styles.loadingContainer}>
+        <StatusBar style="light" />
+        <ActivityIndicator size="large" color="#FFFFFF" />
       </LinearGradient>
     );
   }
 
   return (
     <>
-      <StatusBar style="dark" />
+      <StatusBar style={
+        currentScreen === 'Onboarding' || currentScreen === 'Journey' ? 'light' : 'dark'
+      } />
       {currentScreen === 'Onboarding' && (
         <OnboardingScreen onComplete={handleOnboardingComplete} />
       )}
@@ -91,6 +110,8 @@ export default function App() {
         <HomeScreen 
           onNavigateToChat={navigateToChat}
           onNavigateToJourney={navigateToJourney}
+          onNavigateToSettings={navigateToSettings}
+          onNavigateToHistory={navigateToHistory}
           nativeLanguage={nativeLanguage}
           targetLanguage={targetLanguage}
           proficiencyLevel={proficiencyLevel}
@@ -100,6 +121,21 @@ export default function App() {
         <JourneyScreen
           currentStreak={userProgress?.streak || 0}
           totalWordsLearned={userProgress?.totalIdiomsLearned || 0}
+          onClose={navigateToHome}
+        />
+      )}
+      {currentScreen === 'Settings' && (
+        <SettingsScreen
+          nativeLanguage={nativeLanguage}
+          targetLanguage={targetLanguage}
+          proficiencyLevel={proficiencyLevel}
+          onClose={navigateToHome}
+          onReset={handleReset}
+        />
+      )}
+      {currentScreen === 'History' && (
+        <HistoryScreen
+          nativeLanguage={nativeLanguage}
           onClose={navigateToHome}
         />
       )}

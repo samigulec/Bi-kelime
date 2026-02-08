@@ -1,24 +1,14 @@
-// Type definitions for Daily English Idiom App
+// Type definitions for One Word App
 
 export interface ContentItem {
   id: string;
-  target_word: string; // The word in the target language
+  target_word: string;
   level: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
-  translations: Record<string, string>; // Translations in different languages
-  example_sentence: string; // Example in target language
-  example_translation: Record<string, string>; // Example translations
+  translations: Record<string, string>;
+  example_sentence: string;
+  example_translation: Record<string, string>;
   pronunciation?: string;
   category?: string;
-}
-
-// Keep old Idiom type for backwards compatibility
-export interface Idiom {
-  id: number;
-  idiom: string;
-  meaning: string;
-  meaningTR: string;
-  example: string;
-  pronunciation?: string;
 }
 
 export interface ChatMessage {
@@ -28,17 +18,25 @@ export interface ChatMessage {
   timestamp: Date;
 }
 
+export interface LearnedWord {
+  word: ContentItem;
+  learnedDate: string;
+  isFavorite: boolean;
+}
+
 export interface UserProgress {
   lastViewedDate: string;
   viewedIdiomIds: number[];
   streak: number;
   totalIdiomsLearned: number;
+  learnedWords: LearnedWord[];
+  favorites: string[]; // word IDs
 }
 
 export type ProficiencyLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 
 export interface LanguagePreferences {
-  nativeLanguage: string; // User's native language (for UI and translations)
-  targetLanguage: string; // Language the user wants to learn (for content)
-  proficiencyLevel: ProficiencyLevel; // User's current level
+  nativeLanguage: string;
+  targetLanguage: string;
+  proficiencyLevel: ProficiencyLevel;
 }
